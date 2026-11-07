@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hype Drink — Você merece mais energia</title>
-<meta name="description" content="Hype Drink: bebida funcional energética de 1 litro. Cafeína, taurina, chá verde, vitaminas B e C, eletrólitos e zero açúcar. No copo, na garrafa ou em sachês. Seja sócio.">
+<meta name="description" content="Hype Drink: bebida funcional energética de 1 litro. Cafeína, taurina, chá verde, vitaminas B e C, eletrólitos e zero açúcar. No copo, na garrafa ou em sachês. Monte seu copo e faça uma renda extra trabalhando com a Hype.">
 <meta name="theme-color" content="#07050d">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hype Drink — Você merece mais energia">
-<meta property="og:description" content="1 litro de energia, foco e disposição. Zero açúcar. Peça pelo WhatsApp ou seja sócio.">
+<meta property="og:description" content="1 litro de energia, foco e disposição. Zero açúcar. Monte seu copo e peça pelo WhatsApp.">
 <meta property="og:url" content="https://hypefitdrink.netlify.app/">
 <meta property="og:site_name" content="Hype Drink">
 <meta property="og:locale" content="pt_BR">
@@ -33,6 +33,7 @@
   --mono:"JetBrains Mono",ui-monospace,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--text);font-family:"Archivo",system-ui,sans-serif;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
@@ -98,7 +99,7 @@ button{background:none;border:0;cursor:pointer}
 .stat span{font-family:var(--mono);font-size:10.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
 
 .stage{position:relative;height:100%;min-height:600px;display:grid;place-items:center;perspective:900px}
-.vwrap{position:relative;width:min(100%,380px);transform-style:preserve-3d;transition:transform .2s ease-out}
+.vwrap{position:relative;z-index:1;width:min(100%,380px);transform-style:preserve-3d;transition:transform .2s ease-out}
 .vessel{width:100%;height:auto;overflow:visible;filter:drop-shadow(0 30px 60px rgba(124,58,237,.45))}
 .vessel .glass{fill:rgba(255,255,255,.05)}
 .vessel .edge{fill:none;stroke:rgba(255,255,255,.6);stroke-width:2}
@@ -112,8 +113,12 @@ button{background:none;border:0;cursor:pointer}
 .vessel .wave{animation:wave 3.2s linear infinite}
 .vessel .wave.w2{animation-duration:5s;animation-direction:reverse;opacity:.5}
 @keyframes wave{to{transform:translateX(-150px)}}
-.vessel .ice rect{fill:rgba(255,255,255,.28);stroke:rgba(255,255,255,.6);stroke-width:1.4;transition:opacity .6s}
-.vessel.noice .ice rect{opacity:0}
+.vessel .ice{transition:opacity .6s}
+.vessel.noice .ice{opacity:0}
+.vessel .cube{animation:icebob 5.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.vessel .cube rect{fill:rgba(255,255,255,.24);stroke:rgba(255,255,255,.62);stroke-width:1.3}
+.vessel .cube .gl{fill:rgba(255,255,255,.55);stroke:none}
+@keyframes icebob{0%,100%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(1.6px,-2.6px) rotate(3deg)}65%{transform:translate(-1.3px,1.4px) rotate(-2.4deg)}}
 .vessel .bub circle{fill:rgba(255,255,255,.55);animation:bub 4s linear infinite;opacity:0}
 @keyframes bub{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-300px);opacity:0}}
 .vessel .ringf{fill:var(--flav);transition:fill .6s}
@@ -124,7 +129,7 @@ button{background:none;border:0;cursor:pointer}
 .vessel .stk .mk{fill:#fff;font-size:20px;font-weight:800;font-variation-settings:"wdth" 92;letter-spacing:.2px}
 .vessel .stk .sm{fill:rgba(255,255,255,.72);font-size:4.6px;font-weight:700;letter-spacing:.7px}
 .vessel .s0,.vessel .s1,.vessel .s2{transition:stop-color .9s}
-.vessel .s3{transition:stop-color 1.8s}
+.vessel .s3,.vessel .s4{transition:stop-color 1.8s}
 .vessel.swirl .lvl{animation:swirl 1.2s ease-in-out}
 @keyframes swirl{25%{transform:var(--lt) skewX(4deg)}75%{transform:var(--lt) skewX(-4deg)}}
 
@@ -144,8 +149,18 @@ button{background:none;border:0;cursor:pointer}
 .chips{display:flex;gap:8px}
 .chip{width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,var(--c) 42%,#3b2c9e);box-shadow:0 0 0 2px var(--bg),0 0 0 3px rgba(255,255,255,.18);transition:transform .2s,box-shadow .2s}
 .chip[aria-pressed=true]{transform:scale(1.15);box-shadow:0 0 0 2px var(--bg),0 0 0 4px #fff,0 0 22px var(--c)}
-.flavname{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
+.flavname{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase;text-align:center}
 .flavname b{color:#fff}
+.flavname a{color:var(--p3);margin-left:8px}
+.bchips{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(15,11,25,.8);border:1px solid var(--line);backdrop-filter:blur(10px)}
+.bchip{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 8px;border-radius:999px;font-size:13px;font-weight:700;color:var(--mute);white-space:nowrap;transition:background .25s,color .25s}
+.bchip i{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.bchip[aria-pressed=true]{background:#fff;color:var(--bg)}
+/* referência CR7 atrás do copo */
+.cr7bg{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0}
+.cr7bg svg{width:min(118%,560px);height:auto;overflow:visible}
+.cr7bg .c7{font-family:Archivo,sans-serif;font-weight:900;font-style:italic;font-variation-settings:"wdth" 80}
+.cr7bg .c7t{font-family:var(--mono);font-size:11px;letter-spacing:6px;fill:rgba(216,180,254,.45)}
 
 @media (max-width:900px){
   .hero .wrap{grid-template-columns:1fr;min-height:0}
@@ -159,6 +174,7 @@ button{background:none;border:0;cursor:pointer}
   .stat span{font-size:9.5px}
 
   .bstage .vessel{width:min(70%,230px)}
+  .cr7bg{place-items:start center}.cr7bg svg{width:min(100%,420px)}
 }
 
 /* marquee */
@@ -239,16 +255,17 @@ button{background:none;border:0;cursor:pointer}
 /* builder (monte em casa) */
 .build{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,5vw,72px);align-items:center}
 .bstage{position:relative;border:1px solid var(--line);border-radius:28px;background:radial-gradient(circle at 50% 70%,rgba(124,58,237,.28),transparent 60%),var(--bg2);padding:36px 30px 24px;display:flex;flex-direction:column;align-items:center}
-.bstage .vessel{width:min(100%,280px)}
+.bstage .vessel{width:min(100%,250px)}
 .readout{display:flex;justify-content:space-between;width:100%;margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--mute)}
 .readout b{color:#fff}
 .meter{width:100%;height:4px;border-radius:4px;background:var(--line);margin-top:10px;overflow:hidden}
 .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--p2),var(--p3));transition:width 1s}
-.steps{list-style:none;counter-reset:s;display:grid;gap:6px;margin:26px 0 22px}
-.step{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;padding:13px 16px;border-radius:14px;border:1px solid transparent;cursor:pointer;transition:background .25s,border-color .25s,opacity .25s;opacity:.5}
+.build>div:last-child{display:flex;flex-direction:column;justify-content:center}
+.steps{list-style:none;counter-reset:s;display:grid;gap:2px;margin:0 0 14px}
+.step{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;border:1px solid transparent;cursor:pointer;transition:background .25s,border-color .25s,opacity .25s;opacity:.5}
 .step .n{font-family:var(--mono);font-size:12px;color:var(--p3)}
-.step b{font-weight:800;font-size:16px;display:block}
-.step span{font-size:13.5px;color:var(--mute)}
+.step b{font-weight:800;font-size:15px;line-height:1.25;display:block}
+.step span{font-size:12.5px;line-height:1.35;color:var(--mute)}
 .step .q{font-family:var(--mono);font-size:11px;color:var(--mute)}
 .step.done{opacity:.85}
 .step.done .n{color:#fff}
@@ -324,11 +341,11 @@ textarea{min-height:96px;resize:vertical}
 @media (max-width:900px){.oform{justify-content:flex-start;margin-top:0}}
 @media (max-width:480px){.frow{grid-template-columns:1fr;gap:0}.obar .tot b{font-size:26px}}
 
-/* sócios */
-.socio{background:radial-gradient(900px 600px at 80% 0%,rgba(124,58,237,.4),transparent 70%),radial-gradient(700px 500px at 0% 100%,rgba(168,85,247,.22),transparent 70%),var(--bg2);border-block:1px solid var(--line);overflow:hidden}
-.socio .intro{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,72px);align-items:end;margin-bottom:clamp(40px,6vw,72px)}
-.socio h2{font-size:clamp(56px,9vw,136px)}
-.socio h2 em{font-style:italic;color:var(--p)}
+/* trabalhe conosco */
+.work{background:radial-gradient(900px 600px at 80% 0%,rgba(124,58,237,.4),transparent 70%),radial-gradient(700px 500px at 0% 100%,rgba(168,85,247,.22),transparent 70%),var(--bg2);border-block:1px solid var(--line);overflow:hidden}
+.work .intro{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,72px);align-items:end;margin-bottom:clamp(40px,6vw,72px)}
+.work h2{font-size:clamp(56px,9vw,136px)}
+.work h2 em{font-style:italic;color:var(--p)}
 .perks{list-style:none;display:grid;gap:12px}
 .perks li{display:flex;gap:14px;align-items:center;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:rgba(7,5,13,.5);font-weight:700;font-size:17px}
 .perks svg{width:26px;height:26px;stroke:var(--p);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
@@ -387,7 +404,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border:0;border-radiu
 .ok h3{margin-bottom:10px}
 .ok p{color:var(--mute);margin-bottom:22px}
 .ok .mono{color:var(--p3);display:block;margin-bottom:18px}
-@media (max-width:900px){.socio .intro,.sgrid{grid-template-columns:1fr}}
+@media (max-width:900px){.work .intro,.sgrid{grid-template-columns:1fr}}
 
 /* faq */
 .faq{max-width:880px}
@@ -400,7 +417,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px;border:0;border-radiu
 
 /* footer */
 footer{border-top:1px solid var(--line);padding:60px 0 120px;position:relative;overflow:hidden}
-footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px}
+footer .wrap{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:32px}
 footer h5{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:12px;font-weight:600}
 footer li{list-style:none;margin-bottom:6px}
 footer .big{grid-column:1/-1;font-size:clamp(70px,15vw,210px);line-height:.8;font-style:italic;color:transparent;-webkit-text-stroke:1px rgba(168,85,247,.35);user-select:none}
@@ -409,7 +426,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .credit svg{width:38px;height:38px}
 .credit b{font-size:22px;font-weight:900;font-variation-settings:"wdth" 112;letter-spacing:.02em}
 .credit b span{font-weight:300}
-@media (max-width:700px){footer .wrap{grid-template-columns:1fr 1fr}footer .wrap>div:first-child{grid-column:1/-1}}
+@media (max-width:900px){footer .wrap{grid-template-columns:1fr 1fr}footer .wrap>div:first-child{grid-column:1/-1}}
 
 /* mobile sticky */
 .mcta{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:70;display:none;align-items:center;justify-content:space-between;gap:12px;background:rgba(15,11,25,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line2);border-radius:999px;padding:8px 8px 8px 20px;transform:translateY(150%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
@@ -417,6 +434,71 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .mcta small{display:block;font-family:var(--mono);font-size:10px;color:var(--mute)}
 .mcta b{font-size:19px;font-weight:900;font-variation-settings:"wdth" 75}
 @media (max-width:900px){.mcta{display:flex}}
+
+/* monte seu copo */
+.mcgrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(24px,4vw,56px);align-items:center}
+.mcstage{position:relative;border:1px solid var(--line);border-radius:28px;background:radial-gradient(circle at 50% 62%,color-mix(in srgb,var(--flav) 28%,transparent),transparent 62%),var(--bg2);padding:32px 24px 22px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.mcstage .vessel{width:min(100%,290px)}
+.mcname{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);text-align:center;min-height:2.8em;max-width:34ch}
+.mcname b{color:#fff}
+.mcstep{margin-bottom:22px}
+.mc .lb{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.mc .lb b{color:var(--p3)}
+.mc .lb small{text-transform:none;letter-spacing:0;font-family:Archivo,sans-serif;margin-left:6px;font-size:12px}
+.bases{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.base{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:16px;text-align:left;transition:border-color .2s,background .2s,transform .2s}
+.base:hover{transform:translateY(-2px)}
+.base i{width:38px;height:50px;border-radius:7px 7px 12px 12px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.base b{display:block;font-weight:900;font-size:17px;text-transform:uppercase;font-variation-settings:"wdth" 80;line-height:1.1}
+.base small{font-family:var(--mono);font-size:10px;color:var(--mute)}
+.base[aria-pressed=true]{border-color:var(--p);background:rgba(168,85,247,.12)}
+.xchips{display:flex;flex-wrap:wrap;gap:8px}
+.xchip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px 9px 10px;border-radius:999px;border:1.5px solid var(--line);font-weight:700;font-size:14px;transition:border-color .2s,background .2s}
+.xchip i{width:14px;height:14px;border-radius:50%;background:var(--c)}
+.xchip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 20%,transparent)}
+.xchip[aria-pressed=true]::after{content:"✓";font-size:12px}
+.frow3{display:grid;grid-template-columns:1.6fr 1fr;gap:12px}
+.mc .qty{padding:3px;border-radius:12px}
+.mc .qty button{width:36px;height:36px;border-radius:9px;font-size:18px}
+.mc .qty output{font-size:20px}
+.mcbar{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--line);padding-top:18px;flex-wrap:wrap}
+.mcbar .lb{margin-bottom:4px}
+.mcbar b{display:block;font-size:18px;font-weight:800;max-width:38ch;line-height:1.3}
+.mcbar small{font-family:var(--mono);font-size:13px;color:var(--p3)}
+.mcacts{display:flex;gap:8px;flex-wrap:wrap}
+.toast{margin-top:14px;padding:14px 16px;border-radius:14px;background:rgba(168,85,247,.14);border:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;animation:sw .4s}
+.toast[hidden]{display:none}
+.toast div{display:flex;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){.mcgrid{grid-template-columns:1fr}.mcstage .vessel{width:min(62%,240px)}}
+@media (max-width:560px){.base{flex-direction:column;text-align:center;gap:6px;padding:10px 6px}.base i{width:30px;height:40px}.base b{font-size:14px}.frow3{grid-template-columns:1fr}.mcacts,.mcacts .btn{width:100%}}
+
+/* sacola */
+.bag{display:flex;flex-direction:column;gap:8px}
+.bitem{display:grid;grid-template-columns:28px 1fr auto auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
+.bitem .sw{width:28px;height:38px;border-radius:5px 5px 9px 9px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.bitem .bi b{display:block;font-size:14px}
+.bitem .bi span{display:block;font-size:13px;color:var(--mute);line-height:1.3}
+.bia{display:flex;gap:14px;margin-top:4px}
+.bia button{font-family:var(--mono);font-size:11px;color:var(--p3);text-transform:uppercase;letter-spacing:.06em;padding:0}
+.bia button:hover{color:#fff}
+.bq{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:2px}
+.bq button{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.06);font-weight:700}
+.bq output{min-width:18px;text-align:center;font-weight:800}
+.bp{font-weight:900;font-variation-settings:"wdth" 75;white-space:nowrap;min-width:76px;text-align:right}
+.bagempty{padding:18px;border:1.5px dashed var(--line);border-radius:14px;color:var(--mute);font-size:14.5px;text-align:center}
+.bagempty a,.addmore{color:var(--p3);font-weight:700}
+.addmore{display:inline-block;margin-top:10px;font-size:14px}
+.bagbtn .badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#fff;color:var(--bg);font-size:12px;display:inline-grid;place-items:center;font-weight:900}
+.note a,.consent a{color:var(--p3);text-decoration:underline}
+@media (max-width:480px){.bitem{grid-template-columns:24px 1fr auto}.bp{grid-column:2/-1;text-align:left}}
+
+/* aviso de cookies */
+.cookie{position:fixed;left:16px;right:16px;bottom:16px;z-index:90;max-width:780px;margin:0 auto;background:rgba(15,11,25,.97);border:1px solid var(--line2);border-radius:18px;padding:16px 18px;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;backdrop-filter:blur(14px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.cookie[hidden]{display:none}
+.cookie p{font-size:13.5px;color:#cfc9de;flex:1;min-width:240px}
+.cookie a{color:var(--p3);text-decoration:underline}
+.cookie div{display:flex;gap:8px}
+.legalnav li a{color:var(--text)}
 
 /* reveal */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .8s,transform .9s cubic-bezier(.2,.8,.2,1)}
@@ -441,20 +523,21 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
     <ul>
       <li><a href="#copos">Copo &amp; garrafa</a></li>
       <li><a href="#formula">Fórmula</a></li>
-      <li><a href="#em-casa">Monte em casa</a></li>
-      <li><a href="#pedido">Pedir</a></li>
-      <li><a href="#socio">Seja sócio</a></li>
+      <li><a href="#monte-copo">Monte seu copo</a></li>
+      <li><a href="#em-casa">Em casa</a></li>
+      <li><a href="#trabalhe">Trabalhe conosco</a></li>
     </ul>
     <div class="acts">
       <a href="https://www.instagram.com/hypefitdrink_/" class="iconbtn" target="_blank" rel="noopener" aria-label="Instagram @hypefitdrink_"><svg viewBox="0 0 24 24"><use href="#i-ig"/></svg></a>
-      <a href="#socio" class="btn ghost sm">Seja sócio</a>
-      <a href="#pedido" class="btn sm"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Pedir</a>
+      <a href="#trabalhe" class="btn ghost sm">Renda extra</a>
+      <a href="#pedido" class="btn sm bagbtn" aria-label="Ver sacola"><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg>Sacola <span class="badge" id="bagCount">0</span></a>
     </div>
   </div>
 </header>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V7a3 3 0 0 1 6 0v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></symbol>
 </svg>
 
@@ -469,8 +552,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <h1 class="display">Você merece<em>mais energia.</em></h1>
       <p class="lead"><b>1 litro</b> com cafeína, taurina, chá verde, vitaminas B e C, eletrólitos e <b>zero açúcar</b>. Pra quem trabalha, estuda, cuida da casa ou treina: no copo, na garrafa ou em sachês pra montar em casa.</p>
       <div class="ctas">
-        <a href="#pedido" class="btn"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Pedir agora</a>
-        <a href="#socio" class="btn ghost">Quero ser sócio <span aria-hidden="true">→</span></a>
+        <a href="#monte-copo" class="btn"><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg>Monte seu copo</a>
+        <a href="#trabalhe" class="btn ghost">Faça uma renda extra <span aria-hidden="true">→</span></a>
         <a href="https://www.instagram.com/hypefitdrink_/" class="btn ghost" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><use href="#i-ig"/></svg>Instagram</a>
       </div>
       <div class="stats">
@@ -485,14 +568,27 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="hud h2 r"><span>Vol <b>1000 ml</b></span><i></i></div>
       <div class="hud h3"><i></i><span>Açúcar <b>0 g</b></span></div>
       <div class="hud h4 r"><span>Vit <b>B + C</b> · eletrólitos</span><i></i></div>
+      <div class="cr7bg" aria-hidden="true">
+        <svg viewBox="0 0 400 520">
+          <defs>
+            <linearGradient id="c7stroke" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8b4fe" stop-opacity=".6"/><stop offset="1" stop-color="#7c3aed" stop-opacity=".04"/></linearGradient>
+            <linearGradient id="c7fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a855f7" stop-opacity=".18"/><stop offset="1" stop-color="#a855f7" stop-opacity="0"/></linearGradient>
+            <linearGradient id="c7sweep" gradientUnits="userSpaceOnUse" x1="-160" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#f3e8ff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/><animateTransform attributeName="gradientTransform" type="translate" values="-120 0;680 0" dur="7s" repeatCount="indefinite"/></linearGradient>
+            <clipPath id="c7clip"><text class="c7" x="214" y="470" text-anchor="middle" font-size="560">7</text></clipPath>
+          </defs>
+          <text class="c7" x="214" y="470" text-anchor="middle" font-size="560" fill="url(#c7fill)" stroke="url(#c7stroke)" stroke-width="1.6">7</text>
+          <rect width="400" height="520" fill="url(#c7sweep)" clip-path="url(#c7clip)"/>
+          <text class="c7t" x="200" y="36" text-anchor="middle">CR7 · DRIVE</text>
+        </svg>
+      </div>
       <div class="vwrap" id="vwrap"><div id="heroVessel"></div></div>
       <div class="ctrl">
         <div class="seg" role="group" aria-label="Formato">
           <button type="button" data-form="cup" aria-pressed="true">Copo 1L</button>
           <button type="button" data-form="bottle" aria-pressed="false">Garrafa 1L</button>
         </div>
-        <div class="chips" role="group" aria-label="Cor" id="chips"></div>
-        <p class="flavname">Hype <b id="flavName">Red</b></p>
+        <div class="bchips" role="group" aria-label="Base do sabor" id="heroBases"></div>
+        <p class="flavname">Seu Hype: <b id="flavName">Limão</b><a href="#monte-copo">Personalizar →</a></p>
       </div>
     </div>
   </div>
@@ -591,29 +687,51 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
   </div>
 </section>
 
+<!-- ================= MONTE SEU COPO ================= -->
+<section class="sec mc" id="monte-copo" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv">
+      <div><p class="eyebrow">Monte seu próprio copo</p><h2 class="display">Do seu jeito,<br><span class="pp">no seu sabor</span></h2></div>
+      <p>Escolha uma das três bases, combine com os sabores e frutas que quiser e veja o seu Hype ganhar cor. Monte quantos copos quiser: cada um vai separado pra sacola.</p>
+    </div>
+    <div class="mcgrid">
+      <div class="mcstage rv">
+        <div id="mcVessel" style="width:100%;display:flex;justify-content:center"></div>
+        <p class="mcname" id="mcName"></p>
+      </div>
+      <div class="mcctrl rv">
+        <div class="mcstep"><span class="lb"><b>01</b> · Escolha a base</span><div class="bases" id="mcBases" role="group" aria-label="Base"></div></div>
+        <div class="mcstep"><span class="lb"><b>02</b> · Combine com sabores e frutas <small>opcional, escolha quantos quiser</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Sabores e frutas"></div></div>
+        <div class="mcstep frow3">
+          <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="true">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="false">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div></div>
+          <div><span class="lb">Quantidade</span><div class="qty"><button type="button" id="mcMinus" aria-label="Diminuir">−</button><output id="mcQ">1</output><button type="button" id="mcPlus" aria-label="Aumentar">+</button></div></div>
+        </div>
+        <div class="mcbar">
+          <div><span class="lb" id="mcMode">Seu Hype</span><b id="mcSummary"></b><small id="mcPrice"></small></div>
+          <div class="mcacts"><button type="button" class="btn ghost" id="mcCancel" hidden>Cancelar</button><button type="button" class="btn" id="mcAdd"><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg><span>Adicionar à sacola</span></button></div>
+        </div>
+        <div class="toast" id="mcToast" role="status" hidden></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= PEDIDO ================= -->
 <section class="sec" id="pedido" style="padding-top:0">
   <div class="wrap ordergrid">
     <div class="ordercopy rv">
       <p class="eyebrow">Delivery</p>
       <h2 class="display">Pede no<br><span class="pp">zap.</span></h2>
-      <p>Escolha o seu Hype, coloque o endereço e toque em enviar. O pedido chega organizadinho no WhatsApp da Hype.</p>
+      <p>Monte seus copos, confira a sacola, coloque o endereço e toque em enviar. O pedido chega organizadinho no WhatsApp da Hype.</p>
       <div class="mini">
         <figure class="tile" data-tilt><img src="assets/linha-completa.webp" alt="Linha Hype Drink: garrafas de 1 litro, copo azul e sachês LiftOff e CR7 Drive" width="1600" height="1600" loading="lazy" style="width:100%;height:auto"></figure>
       </div>
     </div>
     <form class="card oform rv" id="orderForm" novalidate>
       <div class="field">
-        <span class="lb">Formato</span>
-        <div class="opts">
-          <button type="button" class="opt" data-prod="0" aria-pressed="true"><b>Copo</b><small>1 litro</small></button>
-          <button type="button" class="opt" data-prod="1" aria-pressed="false"><b>Garrafa</b><small>1 litro</small></button>
-          <button type="button" class="opt" data-prod="2" aria-pressed="false"><b>Sachês</b><small>kit</small></button>
-        </div>
-      </div>
-      <div class="frow">
-        <div class="field"><span class="lb">Cor / sabor</span><div class="chips" id="ochips"></div></div>
-        <div class="field"><span class="lb">Quantidade</span><div class="qty"><button type="button" id="minus" aria-label="Diminuir">−</button><output id="q">1</output><button type="button" id="plus" aria-label="Aumentar">+</button></div></div>
+        <span class="lb">Sua sacola</span>
+        <div class="bag" id="bag" aria-live="polite"></div>
+        <a href="#monte-copo" class="addmore">＋ Montar outro copo</a>
       </div>
       <div class="frow">
         <div class="field"><span class="lb">Receber</span>
@@ -643,47 +761,47 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
         <div class="tot"><span>Total</span><b id="total">R$ 22,00</b></div>
         <button class="btn" type="submit"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Enviar pedido</button>
       </div>
-      <p class="note">A mensagem abre pronta no WhatsApp da Hype. Você confirma tudo na conversa antes de pagar.</p>
+      <p class="note">A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. Seus dados são usados só para preparar e entregar o pedido. Veja a <a href="privacidade.html">Política de Privacidade</a>.</p>
     </form>
   </div>
 </section>
 
-<!-- ================= SÓCIOS ================= -->
-<section class="sec socio" id="socio">
+<!-- ================= TRABALHE CONOSCO ================= -->
+<section class="sec work" id="trabalhe">
   <div class="wrap">
     <div class="intro">
       <div class="rv">
-        <p class="eyebrow">Estamos expandindo</p>
-        <h2 class="display" style="margin-top:14px">Seja sócio<br><em>Hype Drink</em></h2>
-        <p style="color:#cfc9de;max-width:46ch;margin-top:22px;font-size:17px">Buscamos novos parceiros pra trabalhar com a Hype no seu bairro, na sua cidade ou no seu estabelecimento. Produto pronto, marca forte e suporte de quem já vende todo dia.</p>
+        <p class="eyebrow">Trabalhe conosco</p>
+        <h2 class="display" style="margin-top:14px">Faça uma<br><em>renda extra!</em></h2>
+        <p style="color:#cfc9de;max-width:48ch;margin-top:22px;font-size:17px">Trabalhe conosco e tenha uma nova oportunidade de ganhos. Venda Hype Drink no seu bairro, na sua cidade ou no seu estabelecimento, no seu ritmo, com produto pronto e o suporte de quem já vende todo dia.</p>
       </div>
       <ul class="perks rv">
         <li><svg viewBox="0 0 24 24"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Ganhe comissões atrativas</li>
-        <li><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Seja seu próprio chefe</li>
-        <li><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Trabalhe com um produto de sucesso</li>
+        <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Faça seu horário, no seu ritmo</li>
+        <li><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Trabalhe com um produto que já vende</li>
       </ul>
     </div>
 
     <div class="sgrid">
       <div class="card sim rv">
         <p class="eyebrow">Simulador</p>
-        <h3 class="display" style="margin-top:10px">Quanto você pode faturar?</h3>
-        <p class="sub">Mexa nos controles. O cálculo segue a projeção da Hype Drink.</p>
+        <h3 class="display" style="margin-top:10px">Quanto você pode ganhar?</h3>
+        <p class="sub">Mexa nos controles e veja uma simulação com base na projeção da Hype Drink.</p>
         <div class="range"><div class="lab"><span>Clientes por dia</span><b id="vC">25</b></div><input type="range" id="rC" min="5" max="150" step="5" value="25" aria-label="Clientes por dia"></div>
         <div class="range"><div class="lab"><span>Dias trabalhados no mês</span><b id="vD">25</b></div><input type="range" id="rD" min="10" max="30" step="1" value="25" aria-label="Dias no mês"></div>
         <div class="range"><div class="lab"><span>Ticket médio</span><b id="vT">R$ 22</b></div><input type="range" id="rT" min="15" max="35" step="1" value="22" aria-label="Ticket médio"></div>
         <div class="res">
           <div><span>Faturamento / mês</span><b id="oF">R$ 13.750</b><small id="oFd">R$ 550 por dia</small></div>
-          <div class="hl"><span>Lucro estimado</span><b id="oL">R$ 6.250</b><small>margem de ~45%</small></div>
+          <div class="hl"><span>Ganho estimado</span><b id="oL">R$ 6.250</b><small>margem de ~45%</small></div>
         </div>
-        <p class="disc">Simulação baseada na projeção de ganhos da Hype Drink (25 clientes × 25 dias × R$ 22,00 = R$ 13.750 de faturamento e R$ 6.250 de lucro). Os resultados dependem das suas vendas.</p>
+        <p class="disc">Simulação baseada na projeção de ganhos da Hype Drink (25 clientes × 25 dias × R$ 22,00 = R$ 13.750 de faturamento e R$ 6.250 de lucro). É apenas uma simulação ilustrativa, não uma promessa ou garantia de ganhos: os resultados dependem das suas vendas.</p>
       </div>
 
-      <form class="card form rv" id="socioForm" novalidate>
+      <form class="card form rv" id="workForm" novalidate>
         <div id="sfBody">
           <p class="eyebrow">Cadastro</p>
-          <h3 class="display" style="margin-top:10px">Quero ser sócio</h3>
-          <p class="sub">Leva 1 minuto. A equipe Hype te chama no WhatsApp pra apresentar o projeto.</p>
+          <h3 class="display" style="margin-top:10px">Quero fazer parte</h3>
+          <p class="sub">Faça parte dessa oportunidade e comece a construir uma renda extra. Leva 1 minuto: a equipe Hype te chama no WhatsApp pra explicar como funciona.</p>
           <div class="prog" id="sProg">
             <div class="on"><i></i><span>01 Você</span></div>
             <div><i></i><span>02 Onde</span></div>
@@ -705,7 +823,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
             <div class="field"><span class="lb">Onde você quer vender? *</span>
               <div class="cards">
                 <label class="rc"><input type="radio" name="sMod" value="No meu bairro"><span class="dot"></span><span><b>No meu bairro</b><small>Venda direta e delivery pra vizinhança</small></span></label>
-                <label class="rc"><input type="radio" name="sMod" value="Na minha cidade"><span class="dot"></span><span><b>Na minha cidade</b><small>Representante Hype na região</small></span></label>
+                <label class="rc"><input type="radio" name="sMod" value="Na minha cidade"><span class="dot"></span><span><b>Na minha cidade</b><small>Revenda Hype na sua região</small></span></label>
                 <label class="rc"><input type="radio" name="sMod" value="No meu estabelecimento"><span class="dot"></span><span><b>No meu estabelecimento</b><small>Loja, salão, escritório, academia…</small></span></label>
               </div>
             </div>
@@ -727,7 +845,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
               </div>
             </div>
             <div class="field"><label for="sMsg">Conta um pouco sobre você</label><textarea id="sMsg" placeholder="Opcional"></textarea></div>
-            <label class="consent"><input type="checkbox" id="sOk"><span>Autorizo a Hype Drink a entrar em contato comigo pelo WhatsApp sobre a parceria. *</span></label>
+            <label class="consent"><input type="checkbox" id="sOk"><span>Li a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> e autorizo a Hype Drink a usar estes dados para falar comigo pelo WhatsApp sobre a oportunidade. *</span></label>
           </div>
 
           <p class="err" id="sErr" role="alert"></p>
@@ -750,9 +868,10 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <details><summary>O Hype é só pra quem treina?</summary><p>Não. O Hype é pra todo tipo de público: quem trabalha, estuda, dirige, cuida da casa ou treina. É pra qualquer pessoa que queira mais energia e disposição no dia.</p></details>
       <details><summary>O Hype emagrece?</summary><p>Não. O Hype não é um produto para emagrecer. Ele tem ação diurética, que ajuda a desinchar e a eliminar a retenção de líquido, além de dar energia e disposição.</p></details>
       <details><summary>Tem açúcar?</summary><p>Não. O Hype Drink é zero açúcar e baixa caloria. O sabor vem do cardamomo e do saborizante.</p></details>
-      <details><summary>Posso preparar em casa?</summary><p>Pode. A Hype vende os sachês: em um copo de 1 litro, coloque 300 ml de água em temperatura ambiente, os ingredientes, misture, encha de gelo e complete com água gelada.</p></details>
+      <details><summary>Posso preparar em casa?</summary><p>Pode. A Hype vende os sachês: em um copo de 1 litro, coloque 300 ml de água gelada, os ingredientes, misture, encha de gelo e complete com água gelada e saborizante a gosto.</p></details>
       <details><summary>Qual o melhor horário pra tomar?</summary><p>De manhã ou à tarde. Como tem cafeína, o ideal é evitar à noite para não atrapalhar o sono.</p></details>
-      <details><summary>Como funciona ser sócio?</summary><p>Você faz o cadastro aqui no site, a equipe Hype te chama no WhatsApp, apresenta o projeto, os produtos e o modelo de parceria que combina com você.</p></details>
+      <details><summary>Quais sabores posso escolher?</summary><p>São três bases: Limão, Amora e Abacaxi. Cada uma pode ser combinada com Morango, Uva, Maracujá, Jabuticaba, Tangerina, Pink Lemonade e as outras bases. Monte o seu em "Monte seu copo".</p></details>
+      <details><summary>Como funciona o Trabalhe Conosco?</summary><p>Você faz o cadastro aqui no site e a equipe Hype te chama no WhatsApp para explicar como funciona a revenda, os produtos e as condições. Os ganhos dependem das suas vendas.</p></details>
       <details><summary>Quem não deve tomar?</summary><p>Gestantes, lactantes, crianças e pessoas sensíveis à cafeína ou com alguma condição de saúde devem consultar um profissional antes de consumir.</p></details>
     </div>
   </div>
@@ -767,7 +886,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <p style="color:var(--mute);margin-top:16px;max-width:36ch">Saúde, nutrição, bem-estar e suplementação diária. A bebida funcional pra qualquer rotina.</p>
     </div>
     <div><h5>Fale com a gente</h5><ul><li><a href="https://wa.me/5531989691851" target="_blank" rel="noopener">(31) 98969-1851</a></li><li>Delivery</li></ul></div>
-    <div><h5>Siga</h5><ul><li><a href="https://www.instagram.com/hypefitdrink_/" target="_blank" rel="noopener">@hypefitdrink_</a></li><li><a href="#socio">Seja sócio</a></li></ul></div>
+    <div><h5>Siga</h5><ul><li><a href="https://www.instagram.com/hypefitdrink_/" target="_blank" rel="noopener">@hypefitdrink_</a></li><li><a href="#trabalhe">Trabalhe conosco</a></li></ul></div>
+    <div><h5>Legal</h5><ul class="legalnav"><li><a href="privacidade.html">Política de Privacidade</a></li><li><a href="termos.html">Termos de Uso</a></li><li><a href="cookies.html">Política de Cookies</a></li><li><a href="privacidade.html#contato">Privacidade e seus dados</a></li></ul></div>
     <div class="big display" aria-hidden="true">Hype Drink</div>
     <div class="legal"><span>© 2026 Hype Drink. Este produto não substitui uma alimentação equilibrada.</span>
       <a class="credit" href="#topo" aria-label="Criado e acompanhado por BARCHMIND"><span style="color:var(--mute);font-weight:500">Criado e Acompanhado Por:</span><svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#f7f5fb"><rect x="10" y="40" width="8" height="14" rx="1.5"/><rect x="21" y="33" width="8" height="21" rx="1.5"/><rect x="32" y="26" width="8" height="28" rx="1.5"/><rect x="43" y="18" width="8" height="36" rx="1.5"/></g><polyline points="8,33 20,23 29,28 47,12" stroke="#07050d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/><polyline points="8,33 20,23 29,28 47,12" stroke="#b4f22e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><polygon points="55,5 51.5,19 41,9" fill="#b4f22e" stroke="#07050d" stroke-width="2" stroke-linejoin="round" paint-order="stroke"/></svg><b>BARCH<span>MIND</span></b></a>
@@ -775,25 +895,41 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
   </div>
 </footer>
 
+<div class="cookie" id="cookie" role="dialog" aria-label="Aviso de cookies" hidden>
+  <p>Usamos apenas armazenamento essencial neste navegador (sua sacola e suas preferências) para o site funcionar. Não usamos cookies de rastreamento nem de publicidade. <a href="cookies.html">Saiba mais</a>.</p>
+  <div><a class="btn ghost sm" href="cookies.html#preferencias">Preferências</a><button type="button" class="btn sm" id="cookieOk">Entendi</button></div>
+</div>
+
 <div class="mcta" id="mcta">
-  <div><small>1 litro a partir de</small><b id="mPrice">R$ 22,00</b></div>
-  <a href="#pedido" class="btn sm">Pedir no WhatsApp</a>
+  <div><small id="mLabel">1 litro a partir de</small><b id="mPrice">R$ 22,00</b></div>
+  <a href="#monte-copo" class="btn sm" id="mBtn">Monte seu copo</a>
 </div>
 
 <script>
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
-const PRODUCTS = [
-  {nome:"Copo 1L",    label:"Hype Drink no copo (1L)",    preco:22.00},
-  {nome:"Garrafa 1L", label:"Hype Drink na garrafa (1L)", preco:22.00},
-  {nome:"Sachês",     label:"Kit de sachês Hype",         preco:null}   // null = valor a combinar
+const FORMS = {
+  cup:    {nome:"Copo 1L",       preco:22.00},
+  bottle: {nome:"Garrafa 1L",    preco:22.00},
+  kit:    {nome:"Kit de sachês", preco:null}    // null = valor a combinar
+};
+// Bases do cardápio Hype Drink Fit
+const BASES = [
+  {id:"limao",   nome:"Limão",   c:"#8fdc4a"},
+  {id:"amora",   nome:"Amora",   c:"#8e2a8c"},
+  {id:"abacaxi", nome:"Abacaxi", c:"#ffcb3d"}
 ];
-const FLAVORS = [
-  {id:"red",   nome:"Red",   c:"#ff2d55"},
-  {id:"gold",  nome:"Gold",  c:"#ffb31f"},
-  {id:"green", nome:"Green", c:"#2fe08c"},
-  {id:"blue",  nome:"Blue",  c:"#2f7bff"},
-  {id:"pink",  nome:"Pink",  c:"#ff5fc0"}
+// Sabores e frutas que combinam com qualquer base (a própria base não aparece como opção)
+const EXTRAS = [
+  {id:"morango",    nome:"Morango",       c:"#ff3b5c"},
+  {id:"uva",        nome:"Uva",           c:"#7a3db8"},
+  {id:"maracuja",   nome:"Maracujá",      c:"#ffb21a"},
+  {id:"jabuticaba", nome:"Jabuticaba",    c:"#4a1a5c"},
+  {id:"limao",      nome:"Limão",         c:"#8fdc4a"},
+  {id:"amora",      nome:"Amora",         c:"#8e2a8c"},
+  {id:"abacaxi",    nome:"Abacaxi",       c:"#ffcb3d"},
+  {id:"tangerina",  nome:"Tangerina",     c:"#ff8a1f"},
+  {id:"pink",       nome:"Pink Lemonade", c:"#ff7fb8"}
 ];
 const MARGEM = 6250 / 13750; // projeção de ganhos da Hype Drink
 
@@ -806,6 +942,12 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const CUP = "M40 44 L260 44 L228 404 Q227 412 219 412 L81 412 Q73 412 72 404 Z";
 const BOT = "M126 44 H174 V74 C174 96 232 100 232 136 V394 Q232 414 212 414 H88 Q68 414 68 394 V136 C68 100 126 96 126 74 Z";
 const WAVE = "M0 0 Q37.5 -9 75 0 T150 0 T225 0 T300 0 T375 0 T450 0 T525 0 T600 0 V520 H0 Z";
+// cubos de gelo: x, y, largura, altura, giro, duração e atraso do balanço
+const ICE = [
+  [58,4,40,36,-12,5.2,0],[104,0,44,40,8,6.1,1.3],[154,6,40,36,-5,5.6,2.1],[200,2,38,34,14,6.6,.6],
+  [76,44,36,32,10,5.9,1.8],[124,48,42,36,-9,6.4,.3],[172,42,38,34,6,5.4,2.6],[214,48,30,28,-16,6.9,1.1],
+  [96,86,34,30,-14,6.2,2.3],[146,90,36,32,12,5.7,.9],[192,84,32,28,-7,6.8,1.6],[118,126,30,26,18,6.3,2.9]
+].map(([x, y, w, h, r, d, dl]) => `<g class="cube" style="animation-duration:${d}s;animation-delay:-${dl}s"><g transform="rotate(${r} ${x + w / 2} ${y + h / 2})"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8"/><rect class="gl" x="${x + 6}" y="${y + 5}" width="${(w * .42).toFixed(1)}" height="4" rx="2"/></g></g>`).join("");
 function vessel(id){
   const bubbles = Array.from({length:9}, (_, i) =>
     `<circle cx="${70 + i * 20}" cy="${150 + (i * 37) % 160}" r="${2 + (i % 3)}" style="animation-delay:${(i * .45).toFixed(2)}s"/>`).join("");
@@ -814,10 +956,11 @@ function vessel(id){
     <clipPath id="cc-${id}"><path d="${CUP}"/></clipPath>
     <clipPath id="cb-${id}"><path d="${BOT}"/></clipPath>
     <linearGradient id="g-${id}" gradientUnits="userSpaceOnUse" x1="0" y1="-12" x2="0" y2="340">
-      <stop offset="0" class="s0" stop-color="#ff6a85"/>
-      <stop offset=".34" class="s1" stop-color="#ff2d55"><animate attributeName="offset" values=".27;.42;.27" dur="7s" repeatCount="indefinite"/></stop>
-      <stop offset=".7" class="s2" stop-color="#8a2f9a"><animate attributeName="offset" values=".64;.77;.64" dur="9s" repeatCount="indefinite"/></stop>
-      <stop offset="1" class="s3" stop-color="#1e1f7e"/>
+      <stop offset="0" class="s0" stop-color="#b6ec8a"/>
+      <stop offset=".3" class="s1" stop-color="#8fdc4a"><animate attributeName="offset" values=".24;.36;.24" dur="7s" repeatCount="indefinite"/></stop>
+      <stop offset=".55" class="s2" stop-color="#7fc24a"><animate attributeName="offset" values=".49;.62;.49" dur="8s" repeatCount="indefinite"/></stop>
+      <stop offset=".78" class="s3" stop-color="#5a4bb8"><animate attributeName="offset" values=".72;.84;.72" dur="9s" repeatCount="indefinite"/></stop>
+      <stop offset="1" class="s4" stop-color="#1e1f7e"/>
     </linearGradient>
     <path id="at-${id}" d="M -47 0 A 47 47 0 0 1 47 0"/>
     <path id="ab-${id}" d="M -52.5 0 A 52.5 52.5 0 0 0 52.5 0"/>
@@ -828,7 +971,7 @@ function vessel(id){
     <g class="lvl">
       <path class="wave w2" d="${WAVE}" fill="url(#g-${id})"/>
       <path class="wave" d="${WAVE}" fill="url(#g-${id})"/>
-      <g class="ice"><rect x="70" y="4" width="42" height="38" rx="8" transform="rotate(-12 91 23)"/><rect x="128" y="10" width="46" height="40" rx="8" transform="rotate(9 151 30)"/><rect x="186" y="2" width="40" height="36" rx="8" transform="rotate(-6 206 20)"/><rect x="100" y="52" width="38" height="34" rx="8" transform="rotate(14 119 69)"/><rect x="160" y="60" width="40" height="34" rx="8" transform="rotate(-10 180 77)"/></g>
+      <g class="ice">${ICE}</g>
       <g class="bub">${bubbles}</g>
     </g>
   </g>
@@ -880,39 +1023,89 @@ class Vessel{
       this.gy = from + (to - from) * e; this.grad.setAttribute("y2", this.gy.toFixed(1)); if (k < 1) this.raf = requestAnimationFrame(step); };
     this.raf = requestAnimationFrame(step);
   }
-  // deep = degradê real do Hype (sabor em cima, roxo/índigo embaixo); sem deep = cor lisa (água, chás)
-  setColor(c, deep = true){
-    const cols = deep ? [mix(c, "#ffffff", .2), c, mix(c, "#4b34c8", .64), "#1e1f7e"]
-                      : [mix(c, "#ffffff", .15), c, mix(c, "#000000", .06), mix(c, "#000000", .14)];
-    this.stops.forEach((st, i) => st.setAttribute("stop-color", cols[i]));
+  // cor lisa (água, chás) ou degradê real do Hype (sabor em cima, roxo/índigo embaixo)
+  setColor(c, deep = false){
+    this.setStops(deep ? [mix(c, "#ffffff", .2), c, c, mix(c, "#4b34c8", .64), "#1e1f7e"]
+                       : [mix(c, "#ffffff", .15), c, c, mix(c, "#000000", .06), mix(c, "#000000", .14)]);
   }
+  setStops(cols){ this.stops.forEach((st, i) => st.setAttribute("stop-color", cols[i])); }
   swirl(){ this.svg.classList.remove("swirl"); void this.svg.offsetWidth; this.svg.classList.add("swirl"); }
 }
 
 const hero = new Vessel($("#heroVessel"), "h");
 const bv = new Vessel($("#buildVessel"), "b");
+const mv = new Vessel($("#mcVessel"), "m");
 const builder = {step:0};
-let flavor = FLAVORS[0];
+if (reduce) $(".cr7bg svg").pauseAnimations();
 
-function setFlavor(id){
-  flavor = FLAVORS.find(f => f.id === id) || FLAVORS[0];
-  document.documentElement.style.setProperty("--flav", flavor.c);
-  hero.setColor(flavor.c);
-  if (builder.step >= 5) bv.setColor(flavor.c);
-  $("#flavName").textContent = flavor.nome;
-  $$(".chip").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === flavor.id));
+const baseOf = id => BASES.find(b => b.id === id) || BASES[0];
+const extraOf = id => EXTRAS.find(x => x.id === id);
+// mistura das cores: a base pesa o dobro de cada sabor adicionado
+function blend(cols, weights){
+  const rgb = cols.map(c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)));
+  const tot = weights.reduce((a, b) => a + b, 0);
+  return "#" + [0, 1, 2].map(k => Math.round(rgb.reduce((a, c, i) => a + c[k] * weights[i], 0) / tot).toString(16).padStart(2, "0")).join("");
 }
-function chipRow(el){
-  el.innerHTML = FLAVORS.map(f => `<button type="button" class="chip" data-f="${f.id}" style="--c:${f.c}" aria-label="Hype ${f.nome}" aria-pressed="false"></button>`).join("");
-  el.addEventListener("click", e => { const b = e.target.closest(".chip"); if (b) setFlavor(b.dataset.f); });
+// degradê do líquido a partir dos ingredientes (a cor é só a representação da mistura)
+function stopsFor(baseId, extras){
+  const b = baseOf(baseId).c, ex = extras.map(id => extraOf(id).c);
+  if (!ex.length) return [mix(b, "#ffffff", .24), b, mix(b, "#000000", .06), mix(b, "#4b34c8", .6), "#1e1f7e"];
+  const all = blend([b, ...ex], [2, ...ex.map(() => 1)]);
+  const last = ex[ex.length - 1];
+  return [mix(b, "#ffffff", .22), mix(b, all, .45), all, mix(mix(all, last, .5), "#4b34c8", .5), "#1e1f7e"];
 }
-chipRow($("#chips")); chipRow($("#ochips"));
+const gradCss = st => `linear-gradient(180deg,${st[0]} 0%,${st[1]} 28%,${st[2]} 55%,${st[3]} 80%,${st[4]} 100%)`;
+const compName = (base, extras) => [baseOf(base).nome, ...extras.map(id => extraOf(id).nome)].join(" + ");
 
-$$("[data-form]").forEach(b => b.addEventListener("click", () => {
-  hero.setForm(b.dataset.form);
-  $$("[data-form]").forEach(x => x.setAttribute("aria-pressed", x === b));
+// estado do copo que está sendo montado
+const mc = {base:"limao", extras:[], form:"cup", qty:1, editing:null};
+
+$("#heroBases").innerHTML = BASES.map(b => `<button type="button" class="bchip" data-b="${b.id}" aria-pressed="false"><i style="background:${gradCss(stopsFor(b.id, []))}"></i>${b.nome}</button>`).join("");
+$("#mcBases").innerHTML = BASES.map(b => `<button type="button" class="base" data-b="${b.id}" aria-pressed="false"><i style="background:${gradCss(stopsFor(b.id, []))}"></i><span><b>${b.nome}</b><small>base</small></span></button>`).join("");
+$("#heroBases").addEventListener("click", e => { const b = e.target.closest("[data-b]"); if (b) setBase(b.dataset.b); });
+$("#mcBases").addEventListener("click", e => { const b = e.target.closest("[data-b]"); if (b) setBase(b.dataset.b); });
+$("#mcExtras").addEventListener("click", e => {
+  const x = e.target.closest("[data-x]"); if (!x) return;
+  const id = x.dataset.x;
+  mc.extras = mc.extras.includes(id) ? mc.extras.filter(v => v !== id) : [...mc.extras, id];
+  renderMC();
+});
+function setBase(id){ mc.base = id; mc.extras = mc.extras.filter(x => x !== id); renderMC(); }
+function setForm(f){
+  mc.form = f;
+  renderMC();
+}
+$("#mcForm").addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) setForm(b.dataset.v); });
+$("#mcMinus").onclick = () => { mc.qty = Math.max(1, mc.qty - 1); renderMC(); };
+$("#mcPlus").onclick = () => { mc.qty = Math.min(30, mc.qty + 1); renderMC(); };
+
+function renderMC(){
+  const st = stopsFor(mc.base, mc.extras), b = baseOf(mc.base), F = FORMS[mc.form];
+  document.documentElement.style.setProperty("--flav", b.c);
+  [hero, mv].forEach(v => v.setStops(st));
+  if (builder.step >= STEPS.length) bv.setStops(st);
+  const vf = mc.form === "bottle" ? "bottle" : "cup";
+  if (mv.form !== vf) mv.setForm(vf);
+  if (hero.form !== vf) hero.setForm(vf);
+  $$("button[data-form]").forEach(x => x.setAttribute("aria-pressed", x.dataset.form === vf));
+  $$("[data-b]").forEach(x => x.setAttribute("aria-pressed", x.dataset.b === mc.base));
+  $$("#mcForm [data-v]").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === mc.form));
+  $("#mcExtras").innerHTML = EXTRAS.filter(x => x.id !== mc.base).map(x =>
+    `<button type="button" class="xchip" data-x="${x.id}" style="--c:${x.c}" aria-pressed="${mc.extras.includes(x.id)}"><i></i>${x.nome}</button>`).join("");
+  const name = compName(mc.base, mc.extras);
+  $("#flavName").textContent = name;
+  $("#mcName").innerHTML = `${F.nome} · <b></b>`; $("#mcName b").textContent = name;
+  $("#mcQ").textContent = mc.qty;
+  $("#mcSummary").textContent = `${mc.qty}x ${F.nome} · ${name}`;
+  $("#mcPrice").textContent = F.preco == null ? "Valor a combinar no WhatsApp" : fmt(F.preco * mc.qty);
+  $("#mcMode").textContent = mc.editing ? "Editando item da sacola" : "Seu Hype";
+  $("#mcAdd span").textContent = mc.editing ? "Salvar alterações" : "Adicionar à sacola";
+  $("#mcCancel").hidden = !mc.editing;
+}
+
+$$("button[data-form]").forEach(b => b.addEventListener("click", () => {
+  setForm(b.dataset.form);
   hero.svg.setAttribute("aria-label", b.dataset.form === "cup" ? "Copo de Hype Drink de 1 litro" : "Garrafa de Hype Drink de 1 litro");
-  setProd(b.dataset.form === "cup" ? 0 : 1);
 }));
 
 // tilt do copo com o mouse
@@ -925,25 +1118,25 @@ stage.addEventListener("pointerleave", () => vwrap.style.transform = "");
 
 /* ===== Monte em casa ===== */
 const STEPS = [
-  {t:"300 ml de água",           d:"Em temperatura ambiente, no copo de 1 litro.", q:"300 ml", lv:.3, c:"#bfe4ff"},
-  {t:"Herbal Concentrate",       d:"1 medida de 1,2 ml: chá verde, chá preto, malva, hibisco e cardamomo.", q:"1,2 ml", lv:.3, c:"#d9824a"},
-  {t:"N.R.G.",                   d:"1 medida de 1,2 ml de chá preto e guaraná.", q:"1,2 ml", lv:.3, c:"#c46a36"},
-  {t:"LiftOff",                  d:"1 sachê com cafeína, taurina, biotina, complexo B e vitamina C.", q:"1 sachê", lv:.3, c:null, fizz:true},
-  {t:"CR7 Drive + saborizante",  d:"1 scoop de eletrólitos e 2 medidas de saborizante (opcional). Misture bem.", q:"1 scoop", lv:.3, c:"flav", swirl:true},
-  {t:"Gelo até o topo",          d:"Encha o copo de gelo.", q:"gelo", lv:.42, c:"flav", ice:true},
-  {t:"Complete com água gelada", d:"Pronto: 1 litro de hype, bem gelado.", q:"700 ml", lv:.95, c:"flav", ice:true}
+  {t:"300 ml de água gelada",           d:"Água gelada no copo de 1 litro.", q:"300 ml", lv:.3, c:"#bfe4ff"},
+  {t:"Herbal Concentrate",              d:"1 medida de 1,2 ml: chá verde, chá preto, malva, hibisco e cardamomo.", q:"1,2 ml", lv:.3, c:"#d9824a"},
+  {t:"N.R.G.",                          d:"1 medida de 1,2 ml de chá preto e guaraná.", q:"1,2 ml", lv:.3, c:"#c46a36"},
+  {t:"LiftOff",                         d:"1 sachê com cafeína, taurina, biotina, complexo B e vitamina C.", q:"1 sachê", lv:.3, c:null, fizz:true},
+  {t:"CR7 Drive",                       d:"1 scoop de eletrólitos e vitaminas. Misture bem.", q:"1 scoop", lv:.3, c:null, swirl:true},
+  {t:"Gelo até o topo",                 d:"Encha o copo de gelo.", q:"gelo", lv:.42, c:null, ice:true},
+  {t:"Complete com Saborizante + Água", d:"Adicione água gelada e saborizante a gosto.", q:"700 ml", lv:.95, c:"flav", ice:true, swirl:true}
 ];
 bv.svg.classList.add("noice"); bv.setLevel(0);
 $("#steps").innerHTML = STEPS.map((s, i) => `<li class="step" data-i="${i + 1}"><span class="n">${String(i + 1).padStart(2, "0")}</span><div><b>${s.t}</b><span>${s.d}</span></div><span class="q">${s.q}</span></li>`).join("");
 function goStep(n){
   builder.step = Math.max(0, Math.min(STEPS.length, n));
   const s = STEPS[builder.step - 1];
-  let color = "#bfe4ff", deep = false, lv = 0, ice = false;
+  let color = "#bfe4ff", flav = false, lv = 0, ice = false;
   for (let i = 0; i < builder.step; i++){
     const st = STEPS[i]; lv = st.lv; ice = !!st.ice;
-    if (st.c === "flav"){ color = flavor.c; deep = true; } else if (st.c) color = st.c;
+    if (st.c === "flav") flav = true; else if (st.c) color = st.c;
   }
-  bv.setColor(color, deep); bv.setLevel(lv); bv.svg.classList.toggle("noice", !ice);
+  if (flav) bv.setStops(stopsFor(mc.base, mc.extras)); else bv.setColor(color); bv.setLevel(lv); bv.svg.classList.toggle("noice", !ice);
   if (s && (s.swirl || s.fizz)) bv.swirl();
   $$(".step").forEach(li => { const i = +li.dataset.i; li.classList.toggle("done", i < builder.step); li.classList.toggle("cur", i === builder.step); });
   const ml = builder.step === 0 ? 0 : builder.step >= STEPS.length ? 1000 : 300;
@@ -952,7 +1145,7 @@ function goStep(n){
   $("#bNext").textContent = builder.step === 0 ? "Começar" : builder.step >= STEPS.length ? "Pedir meus sachês →" : "Próximo passo →";
   $("#bPrev").style.display = builder.step === 0 ? "none" : "";
 }
-$("#bNext").addEventListener("click", () => { if (builder.step >= STEPS.length) { setProd(2); $("#pedido").scrollIntoView({behavior:"smooth"}); } else goStep(builder.step + 1); });
+$("#bNext").addEventListener("click", () => { if (builder.step >= STEPS.length) { setForm("kit"); $("#monte-copo").scrollIntoView({behavior:"smooth"}); } else goStep(builder.step + 1); });
 $("#bPrev").addEventListener("click", () => goStep(builder.step - 1));
 $("#steps").addEventListener("click", e => { const li = e.target.closest(".step"); if (li) goStep(+li.dataset.i); });
 
@@ -991,17 +1184,83 @@ function showIng(i){
 }
 showIng(0);
 
-/* ===== Pedido ===== */
-let prod = 0, qty = 1;
-function setProd(i){ prod = +i; $$("[data-prod]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.prod === prod)); updOrder(); }
-function updOrder(){
-  $("#q").textContent = qty;
-  const p = PRODUCTS[prod].preco;
-  $("#total").textContent = p == null ? "A combinar" : fmt(p * qty);
+/* ===== Sacola ===== */
+const BAG_KEY = "hype_bag_v1";
+let bag = [];
+try { bag = JSON.parse(localStorage.getItem(BAG_KEY) || "[]").filter(it => FORMS[it.form] && BASES.some(b => b.id === it.base)); } catch (e) { bag = []; }
+const saveBag = () => { try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (e) {} };
+const keyOf = it => [it.form, it.base, [...it.extras].sort().join(",")].join("|");
+function bagTotals(){
+  let sum = 0, kit = false, n = 0;
+  bag.forEach(it => { n += it.qty; const p = FORMS[it.form].preco; if (p == null) kit = true; else sum += p * it.qty; });
+  return {sum, kit, n, txt: !bag.length ? fmt(0) : sum && kit ? `${fmt(sum)} + kit` : kit ? "A combinar" : fmt(sum)};
 }
-$$("[data-prod]").forEach(b => b.addEventListener("click", () => setProd(b.dataset.prod)));
-$("#minus").onclick = () => { qty = Math.max(1, qty - 1); updOrder(); };
-$("#plus").onclick = () => { qty = Math.min(30, qty + 1); updOrder(); };
+function renderBag(){
+  const T = bagTotals();
+  $("#bag").innerHTML = bag.length ? bag.map(it => {
+    const F = FORMS[it.form];
+    return `<div class="bitem" data-id="${it.id}">
+      <i class="sw" style="background:${gradCss(stopsFor(it.base, it.extras))}"></i>
+      <div class="bi"><b>${F.nome}</b><span>${compName(it.base, it.extras)}</span>
+        <div class="bia"><button type="button" data-act="edit">Editar</button><button type="button" data-act="rm">Remover</button></div></div>
+      <div class="bq"><button type="button" data-act="dec" aria-label="Diminuir">−</button><output>${it.qty}</output><button type="button" data-act="inc" aria-label="Aumentar">+</button></div>
+      <b class="bp">${F.preco == null ? "A combinar" : fmt(F.preco * it.qty)}</b></div>`;
+  }).join("") : `<div class="bagempty">Sua sacola está vazia. <a href="#monte-copo">Monte seu primeiro copo</a></div>`;
+  $("#total").textContent = T.txt;
+  $("#bagCount").textContent = T.n;
+  $("#mLabel").textContent = T.n ? `Sacola · ${T.n} ${T.n > 1 ? "itens" : "item"}` : "1 litro a partir de";
+  $("#mPrice").textContent = T.n ? T.txt : fmt(Math.min(...Object.values(FORMS).filter(f => f.preco != null).map(f => f.preco)));
+  $("#mBtn").textContent = T.n ? "Finalizar pedido" : "Monte seu copo";
+  $("#mBtn").setAttribute("href", T.n ? "#pedido" : "#monte-copo");
+}
+$("#bag").addEventListener("click", e => {
+  const btn = e.target.closest("[data-act]"); if (!btn) return;
+  const id = btn.closest(".bitem").dataset.id, it = bag.find(x => x.id === id); if (!it) return;
+  const act = btn.dataset.act;
+  if (act === "inc") it.qty = Math.min(30, it.qty + 1);
+  if (act === "dec") { if (it.qty > 1) it.qty--; else bag = bag.filter(x => x !== it); }
+  if (act === "rm") bag = bag.filter(x => x !== it);
+  if (act === "edit") {
+    Object.assign(mc, {base:it.base, extras:[...it.extras], form:it.form, qty:it.qty, editing:it.id});
+    renderMC(); $("#mcToast").hidden = true;
+    $("#monte-copo").scrollIntoView({behavior:"smooth"});
+    return;
+  }
+  if (mc.editing && !bag.some(x => x.id === mc.editing)) { mc.editing = null; renderMC(); }
+  saveBag(); renderBag();
+});
+function toast(html){
+  const t = $("#mcToast"); t.innerHTML = html; t.hidden = false;
+}
+$("#mcAdd").addEventListener("click", () => {
+  const item = {form:mc.form, base:mc.base, extras:[...mc.extras], qty:mc.qty};
+  const key = keyOf(item);
+  let msg;
+  if (mc.editing){
+    const cur = bag.find(x => x.id === mc.editing);
+    const twin = bag.find(x => x !== cur && keyOf(x) === key);
+    if (twin){ twin.qty = Math.min(30, twin.qty + item.qty); bag = bag.filter(x => x !== cur); }
+    else if (cur) Object.assign(cur, item);
+    else bag.push({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...item});
+    msg = "Item atualizado na sacola.";
+  } else {
+    const twin = bag.find(x => keyOf(x) === key);
+    if (twin) twin.qty = Math.min(30, twin.qty + item.qty);
+    else bag.push({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...item});
+    msg = `${FORMS[item.form].nome} de ${compName(item.base, item.extras)} adicionado à sacola!`;
+  }
+  saveBag(); renderBag();
+  Object.assign(mc, {extras:[], qty:1, editing:null}); renderMC();
+  toast(`<span></span><div><button type="button" class="btn ghost sm" data-t="again">Montar outro</button><a class="btn sm" href="#pedido">Ver sacola (${bagTotals().n})</a></div>`);
+  $("#mcToast span").textContent = msg;
+});
+$("#mcToast").addEventListener("click", e => {
+  if (e.target.closest("[data-t=again]")) { $("#mcToast").hidden = true; $("#monte-copo").scrollIntoView({behavior:"smooth"}); }
+  if (e.target.closest("a")) $("#mcToast").hidden = true;
+});
+$("#mcCancel").addEventListener("click", () => { Object.assign(mc, {extras:[], qty:1, editing:null}); renderMC(); });
+
+/* ===== Pedido ===== */
 const tgVal = id => $(`#${id} [aria-pressed=true]`).dataset.v;
 function toggleGroup(id, cb){
   $(`#${id}`).addEventListener("click", e => {
@@ -1017,21 +1276,21 @@ $("#orderForm").addEventListener("input", e => { e.target.classList.remove("inva
 $("#orderForm").addEventListener("submit", e => {
   e.preventDefault();
   const v = id => $(id).value.trim();
-  const P = PRODUCTS[prod], mode = tgVal("tgMode"), pay = tgVal("tgPay"), delivery = mode === "Delivery";
+  const mode = tgVal("tgMode"), pay = tgVal("tgPay"), delivery = mode === "Delivery";
+  if (!bag.length){ oErr.textContent = "Sua sacola está vazia. Monte seu copo e adicione à sacola antes de enviar."; $("#bag").scrollIntoView({behavior:"smooth", block:"center"}); return; }
   if (!v("#oname")) return oInvalid($("#oname"), "Digite seu nome.");
   if (delivery){
     if (!v("#aRua")) return oInvalid($("#aRua"), "Digite a rua da entrega.");
     if (!v("#aNum")) return oInvalid($("#aNum"), "Digite o número.");
     if (!v("#aBairro")) return oInvalid($("#aBairro"), "Digite o bairro.");
   }
-  const total = P.preco == null ? "a combinar" : fmt(P.preco * qty);
+  const T = bagTotals();
   const L = [
     "*⚡ NOVO PEDIDO · HYPE DRINK*", "",
     `👤 *Cliente:* ${v("#oname")}`, "",
     "*🥤 Pedido*",
-    `• ${qty}x ${P.label}`,
-    `• Cor/sabor: ${flavor.nome}`, "",
-    `💰 *Total:* ${total}`,
+    ...bag.map((it, i) => { const F = FORMS[it.form]; return `${i + 1}. ${it.qty}x ${F.nome}: ${compName(it.base, it.extras)} (${F.preco == null ? "a combinar" : fmt(F.preco * it.qty)})`; }), "",
+    `💰 *Total:* ${T.sum && T.kit ? `${fmt(T.sum)} + kit de sachês a combinar` : T.kit ? "a combinar" : fmt(T.sum)}`,
     `💳 *Pagamento:* ${pay}${pay === "Dinheiro" && v("#troco") ? ` (troco para ${v("#troco")})` : ""}`, ""
   ];
   if (delivery){
@@ -1046,10 +1305,8 @@ $("#orderForm").addEventListener("submit", e => {
   L.push("", "_Pedido enviado pelo site_");
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(L.join("\n"))}`, "_blank");
 });
-const minPrice = Math.min(...PRODUCTS.filter(p => p.preco != null).map(p => p.preco));
-$("#mPrice").textContent = fmt(minPrice);
 
-/* ===== Simulador de sócio ===== */
+/* ===== Simulador (trabalhe conosco) ===== */
 const sim = {c:25, d:25, t:22};
 function paint(r){ r.style.setProperty("--v", ((r.value - r.min) / (r.max - r.min) * 100) + "%"); }
 function updSim(){
@@ -1060,7 +1317,7 @@ function updSim(){
 [["#rC","c"],["#rD","d"],["#rT","t"]].forEach(([s, k]) => { const r = $(s); paint(r); r.addEventListener("input", () => { sim[k] = +r.value; paint(r); updSim(); }); });
 updSim();
 
-/* ===== Cadastro de sócio ===== */
+/* ===== Cadastro (trabalhe conosco) ===== */
 let sStep = 0;
 const fsteps = $$(".fstep"), sErr = $("#sErr");
 $("#sZap").addEventListener("input", e => {
@@ -1095,9 +1352,9 @@ $("#sNext").addEventListener("click", () => {
   if (!validate(sStep)) return;
   if (sStep < 2) return showS(sStep + 1);
   const v = id => $(id).value.trim(), r = n => ($(`input[name=${n}]:checked`) || {}).value || "-";
-  const proto = "HS-" + Date.now().toString(36).toUpperCase().slice(-6);
+  const proto = "HT-" + Date.now().toString(36).toUpperCase().slice(-6);
   const msg = [
-    "*CADASTRO DE SÓCIO · HYPE DRINK*", `Protocolo: ${proto}`, "",
+    "*TRABALHE CONOSCO · HYPE DRINK*", `Protocolo: ${proto}`, "",
     `Nome: ${v("#sNome")}`, `WhatsApp: ${v("#sZap")}`, `Instagram: ${v("#sInsta") || "-"}`,
     `Cidade: ${v("#sCidade")}/${v("#sUF").toUpperCase()}`, `Bairro: ${v("#sBairro") || "-"}`,
     `Quer vender: ${r("sMod")}`, `Experiência: ${r("sExp")}`, `Começar: ${r("sQuando")}`,
@@ -1109,7 +1366,7 @@ $("#sNext").addEventListener("click", () => {
   window.open(url, "_blank");
   $("#sfBody").innerHTML = `<div class="ok swap"><div class="badge"><svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg></div>
     <span class="mono">Protocolo ${proto}</span><h3 class="display">Cadastro pronto, ${first}!</h3>
-    <p>Abrimos o WhatsApp com os seus dados. É só tocar em enviar que a equipe Hype te chama pra apresentar o projeto.</p>
+    <p>Abrimos o WhatsApp com os seus dados. É só tocar em enviar que a equipe Hype te chama pra explicar como funciona.</p>
     <a class="btn" href="${url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Abrir WhatsApp de novo</a></div>`;
 });
 
@@ -1132,7 +1389,7 @@ const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecti
 $$(".rv").forEach(el => io.observe(el));
 const zones = new Map();
 const ctaZones = new IntersectionObserver(es => { es.forEach(en => zones.set(en.target, en.isIntersecting)); onScroll(); });
-$$("#pedido,#socio").forEach(s => ctaZones.observe(s));
+$$("#pedido,#trabalhe,#monte-copo").forEach(s => ctaZones.observe(s));
 function onScroll(){
   const h = document.documentElement.scrollHeight - innerHeight;
   $("#progress").style.transform = `scaleX(${h > 0 ? scrollY / h : 0})`;
@@ -1152,7 +1409,15 @@ function buildMarquee(force){
 }
 buildMarquee(true); document.fonts.ready.then(() => buildMarquee(true));
 addEventListener("resize", () => { clearTimeout(buildMarquee.t); buildMarquee.t = setTimeout(buildMarquee, 150); });
-goStep(0); setFlavor("red"); updOrder();
+renderMC(); renderBag(); goStep(0);
+// aviso de cookies: só armazenamento essencial; a escolha fica salva neste navegador
+const CK = "hype_cookies_v1";
+let ckSaved = null; try { ckSaved = localStorage.getItem(CK); } catch (e) {}
+if (!ckSaved) $("#cookie").hidden = false;
+$("#cookieOk").addEventListener("click", () => {
+  try { localStorage.setItem(CK, JSON.stringify({essenciais:true, analise:false, em:new Date().toISOString()})); } catch (e) {}
+  $("#cookie").hidden = true;
+});
 </script>
 </body>
 </html>

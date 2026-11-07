@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de Cookies — Hype Drink</title>
+<meta name="description" content="Quais cookies e armazenamentos o site da Hype Drink usa, para que servem e como gerenciar suas preferências.">
+<meta name="theme-color" content="#07050d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/legal.css">
+</head>
+<body>
+<header class="top"><div class="in">
+  <a href="index.html" class="logo" aria-label="Hype Drink, página inicial"><span>HYPE</span><span>DR<svg viewBox="0 0 12 24" aria-hidden="true"><path d="M8 0 1 14h5l-2 10 8-14H7z"/></svg>NK</span></a>
+  <a href="index.html" class="back">← Voltar ao site</a>
+</div></header>
+
+<main>
+  <p class="eyebrow">Informações legais</p>
+  <h1>Política de Cookies</h1>
+  <p class="meta">Última atualização: <span class="fill">[DD/MM/AAAA]</span></p>
+
+  <div class="draft"><b>Minuta para validação jurídica.</b> Se a empresa passar a usar ferramentas de análise, pixels de anúncios ou outros serviços, esta política e o aviso de cookies precisam ser atualizados antes.</div>
+
+  <h2>1. O que são cookies e armazenamento local</h2>
+  <p>Cookies e armazenamento local são pequenas informações que um site guarda no seu navegador para lembrar escolhas e funcionar corretamente.</p>
+
+  <h2>2. O que este site usa</h2>
+  <p><b>O site da Hype Drink não usa cookies de rastreamento, de análise ou de publicidade.</b> Usamos apenas armazenamento local essencial, que fica no seu navegador e não é enviado para nós:</p>
+  <table>
+    <tr><th>Nome</th><th>Tipo</th><th>Para que serve</th><th>Duração</th></tr>
+    <tr><td><code>hype_bag_v1</code></td><td>Armazenamento local (essencial)</td><td>Guardar os itens da sua sacola enquanto você navega.</td><td>Até você esvaziar a sacola ou limpar os dados</td></tr>
+    <tr><td><code>hype_cookies_v1</code></td><td>Armazenamento local (essencial)</td><td>Lembrar que você já viu o aviso de cookies e suas preferências.</td><td>Até você limpar os dados</td></tr>
+  </table>
+
+  <h2>3. Serviços de terceiros</h2>
+  <ul>
+    <li><b>Google Fonts:</b> carrega as fontes do site. Seu navegador se conecta aos servidores do Google, que podem registrar dados técnicos como o endereço IP.</li>
+    <li><b>Netlify:</b> hospeda o site e pode registrar dados técnicos de acesso para funcionamento e segurança.</li>
+    <li><b>WhatsApp e Instagram:</b> só são abertos quando você toca nos botões correspondentes; a partir daí valem as políticas desses serviços.</li>
+  </ul>
+
+  <h2 id="preferencias">4. Suas preferências</h2>
+  <div class="panel">
+    <div class="opt"><div><b>Essenciais</b><small>Sacola e preferências. Necessários para o site funcionar, por isso ficam sempre ativos.</small></div><label class="switch"><input type="checkbox" checked disabled aria-label="Essenciais (sempre ativos)"><span></span></label></div>
+    <div class="opt"><div><b>Análise de uso</b><small>Não utilizado no momento. Se vier a ser usado, só será ativado com a sua permissão.</small></div><label class="switch"><input type="checkbox" id="ckAnalise" disabled aria-label="Análise de uso (não utilizado)"><span></span></label></div>
+    <div class="acts">
+      <button type="button" class="btn" id="ckSave">Salvar preferências</button>
+      <button type="button" class="btn ghost" id="ckClear">Apagar dados salvos neste navegador</button>
+    </div>
+    <p class="status" id="ckStatus" role="status"></p>
+  </div>
+  <p>Você também pode apagar esses dados nas configurações do seu navegador.</p>
+
+  <h2>5. Contato</h2>
+  <p>Dúvidas sobre privacidade: veja o <a href="privacidade.html#contato">canal de privacidade</a>.</p>
+</main>
+
+<footer><a href="privacidade.html">Privacidade</a>·<a href="termos.html">Termos de Uso</a>·<a href="cookies.html">Cookies</a>·<a href="index.html">Voltar ao site</a></footer>
+
+<script>
+const CK = "hype_cookies_v1", status = document.getElementById("ckStatus");
+document.getElementById("ckSave").addEventListener("click", () => {
+  try { localStorage.setItem(CK, JSON.stringify({essenciais:true, analise:false, em:new Date().toISOString()})); status.textContent = "Preferências salvas."; }
+  catch (e) { status.textContent = "Não foi possível salvar neste navegador."; }
+});
+document.getElementById("ckClear").addEventListener("click", () => {
+  try { localStorage.removeItem("hype_bag_v1"); localStorage.removeItem(CK); status.textContent = "Pronto: sacola e preferências apagadas deste navegador."; }
+  catch (e) { status.textContent = "Não foi possível apagar neste navegador."; }
+});
+</script>
+</body>
+</html>
