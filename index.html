@@ -441,8 +441,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 @media (max-width:900px){footer .wrap{grid-template-columns:1fr 1fr}footer .wrap>div:first-child{grid-column:1/-1}}
 
 /* mobile sticky */
-.mcta{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:70;display:none;align-items:center;justify-content:space-between;gap:12px;background:rgba(15,11,25,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line2);border-radius:999px;padding:8px 8px 8px 20px;transform:translateY(150%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
-.mcta.show{transform:none}
+.mcta{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:70;display:none;align-items:center;justify-content:space-between;gap:12px;background:rgba(15,11,25,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line2);border-radius:999px;padding:8px 8px 8px 20px;transform:translateY(calc(100% + 60px + env(safe-area-inset-bottom)));opacity:0;visibility:hidden;pointer-events:none;transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s .4s}
+.mcta.show{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s}
 .mcta small{display:block;font-family:var(--mono);font-size:10px;color:var(--mute)}
 .mcta b{font-size:19px;font-weight:900;font-variation-settings:"wdth" 75}
 @media (max-width:900px){.mcta{display:flex}}
@@ -1389,15 +1389,22 @@ const cg = $("#cglow");
 addEventListener("pointermove", e => cg.style.transform = `translate(${e.clientX}px,${e.clientY}px)`, {passive:true});
 const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } }), {threshold:.12});
 $$(".rv").forEach(el => io.observe(el));
-const zones = new Map();
-const ctaZones = new IntersectionObserver(es => { es.forEach(en => zones.set(en.target, en.isIntersecting)); onScroll(); });
-$$("#pedido,#trabalhe,#monte-copo").forEach(s => ctaZones.observe(s));
+// barra fixa do celular: some nas seções que já têm os próprios botões (monte, pedido, trabalhe) e no rodapé
+const ctaZones = $$("#monte-copo,#pedido,#trabalhe,footer"), mcta = $("#mcta");
+let scrollTick = 0;
 function onScroll(){
+  scrollTick = 0;
   const h = document.documentElement.scrollHeight - innerHeight;
   $("#progress").style.transform = `scaleX(${h > 0 ? scrollY / h : 0})`;
-  $("#mcta").classList.toggle("show", scrollY > 700 && ![...zones.values()].some(Boolean));
+  const vh = innerHeight;
+  const inZone = ctaZones.some(s => { const r = s.getBoundingClientRect(); return r.top < vh + 40 && r.bottom > 0; });
+  const show = scrollY > 700 && !inZone;
+  if (show !== mcta.classList.contains("show")) mcta.classList.toggle("show", show);
 }
-addEventListener("scroll", onScroll, {passive:true});
+const queueScroll = () => { if (!scrollTick) scrollTick = requestAnimationFrame(onScroll); };
+addEventListener("scroll", queueScroll, {passive:true});
+addEventListener("resize", queueScroll, {passive:true});
+onScroll();
 // faixa: repete as palavras até cobrir a tela inteira (inclusive com zoom reduzido)
 const mqTrack = $(".marquee .track"), mqBase = mqTrack.innerHTML;
 let mqW = 0;
