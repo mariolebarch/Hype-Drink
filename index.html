@@ -158,10 +158,10 @@ button{background:none;border:0;cursor:pointer}
 .bchip[aria-pressed=true]{background:#fff;color:var(--bg)}
 /* referência CR7 atrás do copo: retrato em pontos, discreto */
 .cr7bg{position:absolute;inset:0;pointer-events:none;z-index:0}
-.cr7bg img{position:absolute;right:-17%;top:-6%;width:min(74%,460px);height:auto;opacity:.72;mix-blend-mode:screen;
-  -webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 95%);mask-image:linear-gradient(to bottom,#000 55%,transparent 95%);
+.cr7bg img{position:absolute;left:50%;top:-84px;width:min(150%,600px);height:auto;translate:-50% 0;opacity:.88;mix-blend-mode:screen;
+  -webkit-mask-image:linear-gradient(to bottom,#000 58%,transparent 96%);mask-image:linear-gradient(to bottom,#000 58%,transparent 96%);
   animation:cr7float 9s ease-in-out infinite}
-@keyframes cr7float{50%{transform:translateY(-10px);opacity:.82}}
+@keyframes cr7float{50%{transform:translateY(-8px);opacity:1}}
 .cr7bg .c7t{position:absolute;right:2%;bottom:16%;font-family:var(--mono);font-size:11px;letter-spacing:6px;color:rgba(216,180,254,.5)}
 
 @media (max-width:900px){
@@ -176,7 +176,8 @@ button{background:none;border:0;cursor:pointer}
   .stat span{font-size:9.5px}
 
   .bstage .vessel{width:min(70%,230px)}
-  .cr7bg img{right:-24%;top:-9%;width:min(80%,330px);opacity:.78}
+  .stage{min-height:740px;padding-top:156px}
+  .cr7bg img{top:-6px;width:min(98%,350px)}
 }
 
 /* marquee */
@@ -571,7 +572,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="hud h3"><i></i><span>Açúcar <b>0 g</b></span></div>
       <div class="hud h4 r"><span>Vit <b>B + C</b> · eletrólitos</span><i></i></div>
       <div class="cr7bg" aria-hidden="true">
-        <img src="assets/cr7-retrato.webp" alt="" width="648" height="792">
+        <img src="assets/cr7-retrato.webp" alt="" width="660" height="750">
         <span class="c7t">CR7 · DRIVE</span>
       </div>
       <div class="vwrap" id="vwrap"><div id="heroVessel"></div></div>
