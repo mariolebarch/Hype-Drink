@@ -156,11 +156,13 @@ button{background:none;border:0;cursor:pointer}
 .bchip{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 8px;border-radius:999px;font-size:13px;font-weight:700;color:var(--mute);white-space:nowrap;transition:background .25s,color .25s}
 .bchip i{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
 .bchip[aria-pressed=true]{background:#fff;color:var(--bg)}
-/* referência CR7 atrás do copo */
-.cr7bg{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0}
-.cr7bg svg{width:min(118%,560px);height:auto;overflow:visible}
-.cr7bg .c7{font-family:Archivo,sans-serif;font-weight:900;font-style:italic;font-variation-settings:"wdth" 80}
-.cr7bg .c7t{font-family:var(--mono);font-size:11px;letter-spacing:6px;fill:rgba(216,180,254,.45)}
+/* referência CR7 atrás do copo: retrato em pontos, discreto */
+.cr7bg{position:absolute;inset:0;pointer-events:none;z-index:0}
+.cr7bg img{position:absolute;right:-17%;top:-6%;width:min(74%,460px);height:auto;opacity:.72;mix-blend-mode:screen;
+  -webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 95%);mask-image:linear-gradient(to bottom,#000 55%,transparent 95%);
+  animation:cr7float 9s ease-in-out infinite}
+@keyframes cr7float{50%{transform:translateY(-10px);opacity:.82}}
+.cr7bg .c7t{position:absolute;right:2%;bottom:16%;font-family:var(--mono);font-size:11px;letter-spacing:6px;color:rgba(216,180,254,.5)}
 
 @media (max-width:900px){
   .hero .wrap{grid-template-columns:1fr;min-height:0}
@@ -174,7 +176,7 @@ button{background:none;border:0;cursor:pointer}
   .stat span{font-size:9.5px}
 
   .bstage .vessel{width:min(70%,230px)}
-  .cr7bg{place-items:start center}.cr7bg svg{width:min(100%,420px)}
+  .cr7bg img{right:-24%;top:-9%;width:min(80%,330px);opacity:.78}
 }
 
 /* marquee */
@@ -569,17 +571,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="hud h3"><i></i><span>Açúcar <b>0 g</b></span></div>
       <div class="hud h4 r"><span>Vit <b>B + C</b> · eletrólitos</span><i></i></div>
       <div class="cr7bg" aria-hidden="true">
-        <svg viewBox="0 0 400 520">
-          <defs>
-            <linearGradient id="c7stroke" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8b4fe" stop-opacity=".6"/><stop offset="1" stop-color="#7c3aed" stop-opacity=".04"/></linearGradient>
-            <linearGradient id="c7fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a855f7" stop-opacity=".18"/><stop offset="1" stop-color="#a855f7" stop-opacity="0"/></linearGradient>
-            <linearGradient id="c7sweep" gradientUnits="userSpaceOnUse" x1="-160" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#f3e8ff" stop-opacity=".38"/><stop offset="1" stop-color="#fff" stop-opacity="0"/><animateTransform attributeName="gradientTransform" type="translate" values="-120 0;680 0" dur="7s" repeatCount="indefinite"/></linearGradient>
-            <clipPath id="c7clip"><text class="c7" x="214" y="470" text-anchor="middle" font-size="560">7</text></clipPath>
-          </defs>
-          <text class="c7" x="214" y="470" text-anchor="middle" font-size="560" fill="url(#c7fill)" stroke="url(#c7stroke)" stroke-width="1.6">7</text>
-          <rect width="400" height="520" fill="url(#c7sweep)" clip-path="url(#c7clip)"/>
-          <text class="c7t" x="200" y="36" text-anchor="middle">CR7 · DRIVE</text>
-        </svg>
+        <img src="assets/cr7-retrato.webp" alt="" width="648" height="792">
+        <span class="c7t">CR7 · DRIVE</span>
       </div>
       <div class="vwrap" id="vwrap"><div id="heroVessel"></div></div>
       <div class="ctrl">
@@ -1036,7 +1029,6 @@ const hero = new Vessel($("#heroVessel"), "h");
 const bv = new Vessel($("#buildVessel"), "b");
 const mv = new Vessel($("#mcVessel"), "m");
 const builder = {step:0};
-if (reduce) $(".cr7bg svg").pauseAnimations();
 
 const baseOf = id => BASES.find(b => b.id === id) || BASES[0];
 const extraOf = id => EXTRAS.find(x => x.id === id);
