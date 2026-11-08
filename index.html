@@ -364,6 +364,15 @@ textarea{min-height:96px;resize:vertical}
 .work .err:empty{min-height:0;margin:0}
 .sim h3,.form h3{font-size:clamp(28px,3vw,38px);margin-bottom:8px;line-height:.95}
 .sim p.sub,.form p.sub{color:var(--mute);font-size:14.5px;margin-bottom:28px;min-height:3em}
+.qpick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
+.qpick button{padding:10px 6px;border-radius:14px;border:1.5px solid var(--line);background:rgba(7,5,13,.5);text-align:center;transition:border-color .2s,background .2s}
+.qpick b{display:block;font-size:12px;font-family:var(--mono);color:var(--mute);font-weight:600}
+.qpick span{display:block;font-size:17px;font-weight:900;font-variation-settings:"wdth" 75;margin-top:2px}
+.qpick button[aria-pressed=true]{border-color:var(--p);background:rgba(168,85,247,.18)}
+.qpick button[aria-pressed=true] b{color:#fff}
+@media (max-width:480px){.qpick{grid-template-columns:1fr 1fr}}
+.perks li a{color:var(--p3);white-space:nowrap}
+.perks li span{font-size:15px;font-weight:600;line-height:1.4}
 .range{margin-bottom:22px}
 .range .lab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .range .lab span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
@@ -470,6 +479,40 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .xchip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 20%,transparent)}
 .xchip[aria-pressed=true]::after{content:"✓";font-size:12px}
 .frow3{display:grid;grid-template-columns:1.6fr 1fr;gap:12px}
+/* produtos herbalife */
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:border-color .25s,transform .25s}
+.pcard:hover{border-color:var(--line2);transform:translateY(-3px)}
+.pcard figure{aspect-ratio:4/5;background:#deddE2;overflow:hidden}
+.pcard figure img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pcard:hover figure img{transform:scale(1.04)}
+.pcard .pb{display:flex;flex-direction:column;gap:8px;padding:16px 16px 18px;flex:1}
+.pcard .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--p3)}
+.pcard h3{font-size:22px;font-weight:900;line-height:1.05;font-variation-settings:"wdth" 80}
+.pcard p{font-size:13.5px;color:var(--mute);line-height:1.35}
+.pcard .pv{display:flex;flex-wrap:wrap;gap:6px}
+.pcard .pv button{padding:6px 11px;border-radius:999px;border:1.5px solid var(--line);font-size:12.5px;font-weight:700;color:var(--mute);transition:all .2s}
+.pcard .pv button[aria-pressed=true]{border-color:var(--p);background:rgba(168,85,247,.15);color:#fff}
+.pcard .pf{margin-top:auto;padding-top:8px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pcard .pf b{font-size:22px;font-weight:900;font-variation-settings:"wdth" 72;white-space:nowrap}
+.pcard .pf .btn{padding:10px 14px;font-size:13.5px}
+.pcard .pf .btn.done{background:#1f9d55;border-color:#1f9d55}
+.pnote{font-size:12.5px;color:var(--mute);margin-top:16px}
+@media (max-width:900px){.pgrid{grid-template-columns:1fr 1fr;gap:10px}.pcard .pf{flex-direction:column;align-items:stretch}.pcard .pf .btn{justify-content:center}}
+@media (max-width:480px){.pcard h3{font-size:18px}.pcard .pb{padding:12px}.pcard p{font-size:12.5px}.pcard .pf b{font-size:20px}}
+.fhint{font-size:12.5px;color:var(--mute);margin-top:8px;line-height:1.35}
+.mckit[hidden]{display:none}
+.kitopts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kitopt{padding:12px 8px;border-radius:14px;border:1.5px solid var(--line);text-align:center;transition:border-color .2s,background .2s}
+.kitopt b{display:block;font-size:22px;font-weight:900;font-variation-settings:"wdth" 75;line-height:1}
+.kitopt span{display:block;font-family:var(--mono);font-size:10.5px;color:var(--mute);margin:2px 0 6px;text-transform:uppercase}
+.kitopt em{font-style:normal;font-weight:800;color:var(--p3);font-size:14px}
+.kitopt[aria-pressed=true]{border-color:var(--p);background:rgba(168,85,247,.12)}
+.pronto{display:flex;gap:12px;align-items:flex-start;margin-top:12px;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;cursor:pointer}
+.pronto input{width:20px;height:20px;flex:none;accent-color:var(--p);margin-top:2px;padding:0}
+.pronto b{display:block;font-size:14.5px}
+.pronto small{color:var(--mute);font-size:12.5px}
+.pronto:has(input:checked){border-color:var(--p);background:rgba(168,85,247,.08)}
 .mc .qty{padding:3px;border-radius:12px}
 .mc .qty button{width:36px;height:36px;border-radius:9px;font-size:18px}
 .mc .qty output{font-size:20px}
@@ -490,6 +533,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .bitem .sw{width:28px;height:38px;border-radius:5px 5px 9px 9px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
 .bitem .bi b{display:block;font-size:14px}
 .bitem .bi span{display:block;font-size:13px;color:var(--mute);line-height:1.3}
+.bitem .bi .swp{color:var(--p3);font-size:12px;margin-top:2px}
+.bitem img.sw{width:28px;height:35px;object-fit:cover;border-radius:6px;box-shadow:none}
 .bia{display:flex;gap:14px;margin-top:4px}
 .bia button{font-family:var(--mono);font-size:11px;color:var(--p3);text-transform:uppercase;letter-spacing:.06em;padding:0}
 .bia button:hover{color:#fff}
@@ -537,6 +582,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <li><a href="#formula">Fórmula</a></li>
       <li><a href="#monte-copo">Monte seu copo</a></li>
       <li><a href="#em-casa">Em casa</a></li>
+      <li><a href="#produtos">Produtos</a></li>
       <li><a href="#trabalhe">Trabalhe conosco</a></li>
     </ul>
     <div class="acts">
@@ -706,8 +752,14 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
         <div class="mcstep"><span class="lb"><b>01</b> · Escolha a base</span><div class="bases" id="mcBases" role="group" aria-label="Base"></div></div>
         <div class="mcstep"><span class="lb"><b>02</b> · Combine com sabores e frutas <small>opcional, escolha quantos quiser</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Sabores e frutas"></div></div>
         <div class="mcstep frow3">
-          <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="true">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="false">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div></div>
+          <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="true">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="false">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div>
+            <p class="fhint" id="mcHint">Delivery sai na garrafa. Na retirada você escolhe copo ou garrafa.</p></div>
           <div><span class="lb">Quantidade</span><div class="qty"><button type="button" id="mcMinus" aria-label="Diminuir">−</button><output id="mcQ">1</output><button type="button" id="mcPlus" aria-label="Aumentar">+</button></div></div>
+        </div>
+        <div class="mcstep mckit" id="mcKit" hidden>
+          <span class="lb"><b>04</b> · Tamanho do kit <small>todos vêm com 1 garrafa, 1 copo e canudos</small></span>
+          <div class="kitopts" id="mcKits" role="group" aria-label="Tamanho do kit"></div>
+          <label class="pronto"><input type="checkbox" id="mcPronto" checked><span><b>Quero 1 drink pronto no kit</b><small>Preparado no sabor que você montou acima</small></span></label>
         </div>
         <div class="mcbar">
           <div><span class="lb" id="mcMode">Seu Hype</span><b id="mcSummary"></b><small id="mcPrice"></small></div>
@@ -716,6 +768,18 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
         <div class="toast" id="mcToast" role="status" hidden></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ================= PRODUTOS HERBALIFE ================= -->
+<section class="sec shop" id="produtos" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv">
+      <div><p class="eyebrow">Produtos Herbalife</p><h2 class="display">Leve pra<br><span class="pp">casa também</span></h2></div>
+      <p>Os mesmos produtos que vão no seu Hype, pra você ter sempre à mão. Adicione à sacola junto com seus copos e kits.</p>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+    <p class="pnote">Produtos Herbalife Nutrition. Disponibilidade e sabores confirmados na conversa do WhatsApp.</p>
   </div>
 </section>
 
@@ -739,6 +803,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="frow">
         <div class="field"><span class="lb">Receber</span>
           <div class="tg" id="tgMode"><button type="button" data-v="Delivery" aria-pressed="true">Delivery</button><button type="button" data-v="Retirada" aria-pressed="false">Retirar</button></div>
+          <p class="fhint" id="modeNote">No delivery os drinks vão na garrafa de 1L.</p>
         </div>
         <div class="field"><span class="lb">Pagamento</span>
           <div class="tg" id="tgPay"><button type="button" data-v="Pix" aria-pressed="true">Pix</button><button type="button" data-v="Cartão" aria-pressed="false">Cartão</button><button type="button" data-v="Dinheiro" aria-pressed="false">Dinheiro</button></div>
@@ -761,7 +826,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       </div>
       <p class="err" id="oErr" role="alert"></p>
       <div class="obar">
-        <div class="tot"><span>Total</span><b id="total">R$ 22,00</b></div>
+        <div class="tot"><span>Total</span><b id="total">R$ 0,00</b></div>
         <button class="btn" type="submit"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Enviar pedido</button>
       </div>
       <p class="note">A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. Seus dados são usados só para preparar e entregar o pedido. Veja a <a href="privacidade.html">Política de Privacidade</a>.</p>
@@ -774,14 +839,15 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
   <div class="wrap">
     <div class="intro">
       <div class="rv">
-        <p class="eyebrow">Trabalhe conosco</p>
-        <h2 class="display" style="margin-top:14px">Faça uma<br><em>renda extra!</em></h2>
-        <p style="color:#cfc9de;max-width:48ch;margin-top:22px;font-size:17px">Trabalhe conosco e tenha uma nova oportunidade de ganhos. Venda Hype Drink no seu bairro, na sua cidade ou no seu estabelecimento, no seu ritmo, com produto pronto e o suporte de quem já vende todo dia.</p>
+        <p class="eyebrow">Trabalhe conosco · Estamos expandindo</p>
+        <h2 class="display" style="margin-top:14px">Lucre mais com<br><em>o Hype Drink!</em></h2>
+        <p style="color:#cfc9de;max-width:48ch;margin-top:22px;font-size:17px">Já pensou em levar essa bebida pra academia onde você treina ou que você tem? Venda Hype Drink na academia, no seu bairro, na sua cidade ou no seu estabelecimento, no seu ritmo, com produto pronto e o suporte de quem já vende todo dia.</p>
       </div>
       <ul class="perks rv">
-        <li><svg viewBox="0 0 24 24"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Ganhe comissões atrativas</li>
+        <li><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>Leve o Hype pra sua academia</li>
         <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Faça seu horário, no seu ritmo</li>
         <li><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Trabalhe com um produto que já vende</li>
+        <li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Projeto de expansão: encontros presenciais no Master Place (Reta da Penha, Vitória). <a href="https://wa.me/5531989691851?text=Ol%C3%A1!%20Quero%20saber%20a%20pr%C3%B3xima%20data%20do%20encontro%20do%20projeto%20de%20expans%C3%A3o%20do%20Hype%20Drink." target="_blank" rel="noopener">Pergunte a próxima data →</a></span></li>
       </ul>
     </div>
 
@@ -789,15 +855,15 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="card sim rv">
         <p class="eyebrow">Simulador</p>
         <h3 class="display" style="margin-top:10px">Quanto você pode ganhar?</h3>
-        <p class="sub">Mexa nos controles e veja uma simulação com base na projeção da Hype Drink.</p>
-        <div class="range"><div class="lab"><span>Clientes por dia</span><b id="vC">25</b></div><input type="range" id="rC" min="5" max="150" step="5" value="25" aria-label="Clientes por dia"></div>
-        <div class="range"><div class="lab"><span>Dias trabalhados no mês</span><b id="vD">25</b></div><input type="range" id="rD" min="10" max="30" step="1" value="25" aria-label="Dias no mês"></div>
-        <div class="range"><div class="lab"><span>Ticket médio</span><b id="vT">R$ 22</b></div><input type="range" id="rT" min="15" max="35" step="1" value="22" aria-label="Ticket médio"></div>
+        <p class="sub">Escolha quantos Hypes você vende por dia e veja a projeção da Hype Drink pro mês.</p>
+        <div class="qpick" id="qpick" role="group" aria-label="Exemplos de vendas por dia"></div>
+        <div class="range"><div class="lab"><span>Hypes vendidos por dia</span><b id="vC">10</b></div><input type="range" id="rC" min="5" max="150" step="5" value="10" aria-label="Hypes vendidos por dia"></div>
+        <div class="range"><div class="lab"><span>Dias trabalhados no mês</span><b id="vD">30</b></div><input type="range" id="rD" min="10" max="30" step="1" value="30" aria-label="Dias no mês"></div>
         <div class="res">
-          <div><span>Faturamento / mês</span><b id="oF">R$ 13.750</b><small id="oFd">R$ 550 por dia</small></div>
-          <div class="hl"><span>Ganho estimado</span><b id="oL">R$ 6.250</b><small>margem de ~45%</small></div>
+          <div><span>Vendas / mês</span><b id="oF">R$ 9.000</b><small id="oFd">300 hypes a R$ 30</small></div>
+          <div class="hl"><span>Lucro estimado</span><b id="oL">R$ 2.160</b><small>cerca de R$ 7,20 por hype</small></div>
         </div>
-        <p class="disc">Simulação baseada na projeção de ganhos da Hype Drink (25 clientes × 25 dias × R$ 22,00 = R$ 13.750 de faturamento e R$ 6.250 de lucro). É apenas uma simulação ilustrativa, não uma promessa ou garantia de ganhos: os resultados dependem das suas vendas.</p>
+        <p class="disc">Projeção da Hype Drink: cerca de R$ 7,20 de lucro por hype (10 hypes/dia ≈ R$ 2.160 por mês, em 30 dias). É apenas uma simulação ilustrativa, não uma promessa ou garantia de ganhos: os resultados dependem das suas vendas.</p>
       </div>
 
       <form class="card form rv" id="workForm" novalidate>
@@ -867,11 +933,12 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
   <div class="wrap">
     <div class="head rv"><div><p class="eyebrow">FAQ</p><h2 class="display">Dúvidas<br><span class="pp">rápidas</span></h2></div></div>
     <div class="faq rv">
-      <details open><summary>Qual o tamanho do Hype?</summary><p>Sempre 1 litro, tanto no copo quanto na garrafa. É pra ir tomando aos poucos ao longo do dia.</p></details>
+      <details open><summary>Qual o tamanho do Hype?</summary><p>Sempre 1 litro, tanto no copo quanto na garrafa, por R$ 30,00. É pra ir tomando aos poucos ao longo do dia.</p></details>
+      <details><summary>Copo ou garrafa: como escolho?</summary><p>No delivery o Hype vai sempre na garrafa de 1 litro. Se for retirar, você escolhe copo ou garrafa, pelo mesmo valor.</p></details>
       <details><summary>O Hype é só pra quem treina?</summary><p>Não. O Hype é pra todo tipo de público: quem trabalha, estuda, dirige, cuida da casa ou treina. É pra qualquer pessoa que queira mais energia e disposição no dia.</p></details>
       <details><summary>O Hype emagrece?</summary><p>Não. O Hype não é um produto para emagrecer. Ele tem ação diurética, que ajuda a desinchar e a eliminar a retenção de líquido, além de dar energia e disposição.</p></details>
       <details><summary>Tem açúcar?</summary><p>Não. O Hype Drink é zero açúcar e baixa caloria. O sabor vem do cardamomo e do saborizante.</p></details>
-      <details><summary>Posso preparar em casa?</summary><p>Pode. A Hype vende os sachês: em um copo de 1 litro, coloque 300 ml de água gelada, os ingredientes, misture, encha de gelo e complete com água gelada e saborizante a gosto.</p></details>
+      <details><summary>Posso preparar em casa?</summary><p>Pode. A Hype vende kits promocionais de sachês: 6 sachês por R$ 160, 7 por R$ 180 e 8 por R$ 200. Todo kit vem com 1 garrafa, 1 copo e canudos, e você pode pedir 1 drink pronto junto. Pra preparar: em um copo de 1 litro, coloque 300 ml de água gelada, os ingredientes, misture, encha de gelo e complete com água gelada e saborizante a gosto.</p></details>
       <details><summary>Qual o melhor horário pra tomar?</summary><p>De manhã ou à tarde. Como tem cafeína, o ideal é evitar à noite para não atrapalhar o sono.</p></details>
       <details><summary>Quais sabores posso escolher?</summary><p>São três bases: Limão, Amora e Abacaxi. Cada uma pode ser combinada com Morango, Uva, Maracujá, Jabuticaba, Tangerina, Pink Lemonade e as outras bases. Monte o seu em "Monte seu copo".</p></details>
       <details><summary>Como funciona o Trabalhe Conosco?</summary><p>Você faz o cadastro aqui no site e a equipe Hype te chama no WhatsApp para explicar como funciona a revenda, os produtos e as condições. Os ganhos dependem das suas vendas.</p></details>
@@ -904,7 +971,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 </div>
 
 <div class="mcta" id="mcta">
-  <div><small id="mLabel">1 litro a partir de</small><b id="mPrice">R$ 22,00</b></div>
+  <div><small id="mLabel">1 litro a partir de</small><b id="mPrice">R$ 30,00</b></div>
   <a href="#monte-copo" class="btn sm" id="mBtn">Monte seu copo</a>
 </div>
 
@@ -912,10 +979,24 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
 const FORMS = {
-  cup:    {nome:"Copo 1L",       preco:22.00},
-  bottle: {nome:"Garrafa 1L",    preco:22.00},
-  kit:    {nome:"Kit de sachês", preco:null}    // null = valor a combinar
+  cup:    {nome:"Copo 1L",       preco:30.00},
+  bottle: {nome:"Garrafa 1L",    preco:30.00},
+  kit:    {nome:"Kit de sachês", preco:null}    // preço vem do tamanho do kit (KITS)
 };
+// Kits promocionais de sachês: todos vêm com 1 garrafa, 1 copo e canudos, e podem levar 1 drink pronto
+const KITS = [
+  {id:"k6", n:6, preco:160.00},
+  {id:"k7", n:7, preco:180.00},
+  {id:"k8", n:8, preco:200.00}
+];
+// Produtos Herbalife vendidos avulsos. ATENÇÃO: preços fictícios, trocar pelos valores reais da cliente
+const PRODS = [
+  {id:"cr7",    nome:"CR7 Drive",          det:"Pote 810 g · eletrólitos, carboidratos e vitaminas", img:"assets/hl-cr7-drive.webp",          preco:249.90},
+  {id:"liftoff",nome:"LiftOff",            det:"Caixa com 15 sachês · cafeína, taurina e vitaminas",  img:"assets/hl-liftoff.webp",            preco:149.90, var:["Limão","Abacaxi","Amora"]},
+  {id:"herbal", nome:"Herbal Concentrate", det:"Chá verde, chá preto, malva, hibisco e cardamomo",    img:"assets/hl-herbal-concentrate.webp", preco:139.90},
+  {id:"nrg",    nome:"N.R.G.",             det:"Chá preto e guaraná",                                img:"assets/hl-nrg.webp",                preco:119.90}
+];
+const LUCRO_HYPE = 7.20; // lucro por drink usado pela Hype Drink (10 hypes/dia × 30 dias = R$ 2.160)
 // Bases do cardápio Hype Drink Fit
 const BASES = [
   {id:"limao",   nome:"Limão",   c:"#8fdc4a"},
@@ -934,7 +1015,6 @@ const EXTRAS = [
   {id:"tangerina",  nome:"Tangerina",     c:"#ff8a1f"},
   {id:"pink",       nome:"Pink Lemonade", c:"#ff7fb8"}
 ];
-const MARGEM = 6250 / 13750; // projeção de ganhos da Hype Drink
 
 const fmt = v => v.toLocaleString("pt-BR", {style:"currency", currency:"BRL"});
 const fmt0 = v => v.toLocaleString("pt-BR", {style:"currency", currency:"BRL", maximumFractionDigits:0});
@@ -1060,7 +1140,12 @@ const gradCss = st => `linear-gradient(180deg,${st[0]} 0%,${st[1]} 28%,${st[2]} 
 const compName = (base, extras) => [baseOf(base).nome, ...extras.map(id => extraOf(id).nome)].join(" + ");
 
 // estado do copo que está sendo montado
-const mc = {base:"limao", extras:[], form:"cup", qty:1, editing:null};
+const mc = {base:"limao", extras:[], form:"cup", qty:1, kit:"k6", pronto:true, editing:null};
+const kitOf = id => KITS.find(k => k.id === id) || KITS[0];
+const prodOf = id => PRODS.find(p => p.id === id);
+$("#mcKits").innerHTML = KITS.map(k => `<button type="button" class="kitopt" data-k="${k.id}" aria-pressed="false"><b>${k.n}</b><span>sachês</span><em>${fmt(k.preco)}</em></button>`).join("");
+$("#mcKits").addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (b){ mc.kit = b.dataset.k; renderMC(); } });
+$("#mcPronto").addEventListener("change", e => { mc.pronto = e.target.checked; renderMC(); });
 
 $("#heroBases").innerHTML = BASES.map(b => `<button type="button" class="bchip" data-b="${b.id}" aria-pressed="false"><i style="background:${gradCss(stopsFor(b.id, []))}"></i>${b.nome}</button>`).join("");
 $("#mcBases").innerHTML = BASES.map(b => `<button type="button" class="base" data-b="${b.id}" aria-pressed="false"><i style="background:${gradCss(stopsFor(b.id, []))}"></i><span><b>${b.nome}</b><small>base</small></span></button>`).join("");
@@ -1094,12 +1179,17 @@ function renderMC(){
   $$("#mcForm [data-v]").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === mc.form));
   $("#mcExtras").innerHTML = EXTRAS.filter(x => x.id !== mc.base).map(x =>
     `<button type="button" class="xchip" data-x="${x.id}" style="--c:${x.c}" aria-pressed="${mc.extras.includes(x.id)}"><i></i>${x.nome}</button>`).join("");
-  const name = compName(mc.base, mc.extras);
+  const name = compName(mc.base, mc.extras), isKit = mc.form === "kit", K = kitOf(mc.kit);
   $("#flavName").textContent = name;
-  $("#mcName").innerHTML = `${F.nome} · <b></b>`; $("#mcName b").textContent = name;
+  $("#mcKit").hidden = !isKit;
+  $("#mcHint").hidden = isKit;
+  $$("#mcKits [data-k]").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === mc.kit));
+  $("#mcPronto").checked = mc.pronto;
+  const cur = {form:mc.form, base:mc.base, extras:mc.extras, kit:mc.kit, pronto:mc.pronto, qty:mc.qty};
+  $("#mcName").innerHTML = `${itemTitle(cur)} · <b></b>`; $("#mcName b").textContent = isKit && !mc.pronto ? "só sachês" : name;
   $("#mcQ").textContent = mc.qty;
-  $("#mcSummary").textContent = `${mc.qty}x ${F.nome} · ${name}`;
-  $("#mcPrice").textContent = F.preco == null ? "Valor a combinar no WhatsApp" : fmt(F.preco * mc.qty);
+  $("#mcSummary").textContent = isKit ? `${mc.qty}x Kit ${K.n} sachês${mc.pronto ? ` + drink pronto ${name}` : ""}` : `${mc.qty}x ${F.nome} · ${name}`;
+  $("#mcPrice").textContent = fmt(priceOf(cur) * mc.qty);
   $("#mcMode").textContent = mc.editing ? "Editando item da sacola" : "Seu Hype";
   $("#mcAdd span").textContent = mc.editing ? "Salvar alterações" : "Adicionar à sacola";
   $("#mcCancel").hidden = !mc.editing;
@@ -1189,29 +1279,53 @@ showIng(0);
 /* ===== Sacola ===== */
 const BAG_KEY = "hype_bag_v1";
 let bag = [];
-try { bag = JSON.parse(localStorage.getItem(BAG_KEY) || "[]").filter(it => FORMS[it.form] && BASES.some(b => b.id === it.base)); } catch (e) { bag = []; }
+try {
+  bag = JSON.parse(localStorage.getItem(BAG_KEY) || "[]").filter(it => it && it.qty > 0 && (it.form === "prod" ? !!prodOf(it.pid) : FORMS[it.form] && BASES.some(b => b.id === it.base)));
+  bag.forEach(it => { if (it.form === "kit"){ it.kit = kitOf(it.kit).id; if (typeof it.pronto !== "boolean") it.pronto = true; } if (it.form !== "prod" && !Array.isArray(it.extras)) it.extras = []; });
+} catch (e) { bag = []; }
 const saveBag = () => { try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (e) {} };
-const keyOf = it => [it.form, it.base, [...it.extras].sort().join(",")].join("|");
+const keyOf = it => it.form === "prod" ? ["prod", it.pid, it.v || ""].join("|")
+  : [it.form, it.base, [...it.extras].sort().join(","), it.form === "kit" ? `${it.kit}:${it.pronto ? 1 : 0}` : ""].join("|");
+// preço unitário de qualquer item da sacola
+function priceOf(it){
+  if (it.form === "prod") return prodOf(it.pid).preco;
+  if (it.form === "kit") return kitOf(it.kit).preco;
+  return FORMS[it.form].preco;
+}
+// título do item; no delivery o drink sai sempre na garrafa
+function itemTitle(it, deliv = false){
+  if (it.form === "prod") { const P = prodOf(it.pid); return P.nome + (it.v ? ` · ${it.v}` : ""); }
+  if (it.form === "kit") return `Kit ${kitOf(it.kit).n} sachês`;
+  return FORMS[deliv ? "bottle" : it.form].nome;
+}
+function itemDesc(it){
+  if (it.form === "prod") return prodOf(it.pid).det;
+  if (it.form === "kit") return `Com garrafa, copo e canudos${it.pronto ? ` + 1 drink pronto: ${compName(it.base, it.extras)}` : ""}`;
+  return compName(it.base, it.extras);
+}
+const isDeliv = () => { const b = $("#tgMode [aria-pressed=true]"); return !b || b.dataset.v === "Delivery"; };
 function bagTotals(){
-  let sum = 0, kit = false, n = 0;
-  bag.forEach(it => { n += it.qty; const p = FORMS[it.form].preco; if (p == null) kit = true; else sum += p * it.qty; });
-  return {sum, kit, n, txt: !bag.length ? fmt(0) : sum && kit ? `${fmt(sum)} + kit` : kit ? "A combinar" : fmt(sum)};
+  let sum = 0, n = 0;
+  bag.forEach(it => { n += it.qty; sum += priceOf(it) * it.qty; });
+  return {sum, n, txt: fmt(sum)};
 }
 function renderBag(){
-  const T = bagTotals();
+  const T = bagTotals(), deliv = isDeliv();
   $("#bag").innerHTML = bag.length ? bag.map(it => {
-    const F = FORMS[it.form];
+    const sw = it.form === "prod" ? `<img class="sw ph" src="${prodOf(it.pid).img}" alt="" width="28" height="35">`
+      : `<i class="sw" style="background:${gradCss(stopsFor(it.base, it.extras))}"></i>`;
+    const swapped = deliv && it.form === "cup";
     return `<div class="bitem" data-id="${it.id}">
-      <i class="sw" style="background:${gradCss(stopsFor(it.base, it.extras))}"></i>
-      <div class="bi"><b>${F.nome}</b><span>${compName(it.base, it.extras)}</span>
-        <div class="bia"><button type="button" data-act="edit">Editar</button><button type="button" data-act="rm">Remover</button></div></div>
+      ${sw}
+      <div class="bi"><b>${itemTitle(it, swapped)}</b><span>${itemDesc(it)}</span>${swapped ? `<span class="swp">Pediu copo: no delivery vai na garrafa</span>` : ""}
+        <div class="bia">${it.form === "prod" ? "" : `<button type="button" data-act="edit">Editar</button>`}<button type="button" data-act="rm">Remover</button></div></div>
       <div class="bq"><button type="button" data-act="dec" aria-label="Diminuir">−</button><output>${it.qty}</output><button type="button" data-act="inc" aria-label="Aumentar">+</button></div>
-      <b class="bp">${F.preco == null ? "A combinar" : fmt(F.preco * it.qty)}</b></div>`;
+      <b class="bp">${fmt(priceOf(it) * it.qty)}</b></div>`;
   }).join("") : `<div class="bagempty">Sua sacola está vazia. <a href="#monte-copo">Monte seu primeiro copo</a></div>`;
   $("#total").textContent = T.txt;
   $("#bagCount").textContent = T.n;
   $("#mLabel").textContent = T.n ? `Sacola · ${T.n} ${T.n > 1 ? "itens" : "item"}` : "1 litro a partir de";
-  $("#mPrice").textContent = T.n ? T.txt : fmt(Math.min(...Object.values(FORMS).filter(f => f.preco != null).map(f => f.preco)));
+  $("#mPrice").textContent = T.n ? T.txt : fmt(FORMS.cup.preco);
   $("#mBtn").textContent = T.n ? "Finalizar pedido" : "Monte seu copo";
   $("#mBtn").setAttribute("href", T.n ? "#pedido" : "#monte-copo");
 }
@@ -1224,6 +1338,7 @@ $("#bag").addEventListener("click", e => {
   if (act === "rm") bag = bag.filter(x => x !== it);
   if (act === "edit") {
     Object.assign(mc, {base:it.base, extras:[...it.extras], form:it.form, qty:it.qty, editing:it.id});
+    if (it.form === "kit") Object.assign(mc, {kit:it.kit, pronto:it.pronto});
     renderMC(); $("#mcToast").hidden = true;
     $("#monte-copo").scrollIntoView({behavior:"smooth"});
     return;
@@ -1236,6 +1351,7 @@ function toast(html){
 }
 $("#mcAdd").addEventListener("click", () => {
   const item = {form:mc.form, base:mc.base, extras:[...mc.extras], qty:mc.qty};
+  if (mc.form === "kit") Object.assign(item, {kit:mc.kit, pronto:mc.pronto});
   const key = keyOf(item);
   let msg;
   if (mc.editing){
@@ -1249,7 +1365,7 @@ $("#mcAdd").addEventListener("click", () => {
     const twin = bag.find(x => keyOf(x) === key);
     if (twin) twin.qty = Math.min(30, twin.qty + item.qty);
     else bag.push({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...item});
-    msg = `${FORMS[item.form].nome} de ${compName(item.base, item.extras)} adicionado à sacola!`;
+    msg = item.form === "kit" ? `${itemTitle(item)} adicionado à sacola!` : `${FORMS[item.form].nome} de ${compName(item.base, item.extras)} adicionado à sacola!`;
   }
   saveBag(); renderBag();
   Object.assign(mc, {extras:[], qty:1, editing:null}); renderMC();
@@ -1260,6 +1376,31 @@ $("#mcToast").addEventListener("click", e => {
   if (e.target.closest("[data-t=again]")) { $("#mcToast").hidden = true; $("#monte-copo").scrollIntoView({behavior:"smooth"}); }
   if (e.target.closest("a")) $("#mcToast").hidden = true;
 });
+/* ===== Produtos Herbalife ===== */
+const pSel = {};
+$("#pgrid").innerHTML = PRODS.map(p => {
+  if (p.var) pSel[p.id] = p.var[0];
+  return `<article class="pcard rv" data-p="${p.id}">
+    <figure><img src="${p.img}" alt="${p.nome} Herbalife" width="480" height="600" loading="lazy"></figure>
+    <div class="pb"><span class="tag">Herbalife</span><h3>${p.nome}</h3><p>${p.det}</p>
+      ${p.var ? `<div class="pv" role="group" aria-label="Sabor">${p.var.map((v, i) => `<button type="button" data-v="${v}" aria-pressed="${i === 0}">${v}</button>`).join("")}</div>` : ""}
+      <div class="pf"><b>${fmt(p.preco)}</b><button type="button" class="btn sm" data-add><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg><span>Adicionar</span></button></div>
+    </div></article>`;
+}).join("");
+$("#pgrid").addEventListener("click", e => {
+  const card = e.target.closest(".pcard"); if (!card) return;
+  const pid = card.dataset.p, vb = e.target.closest(".pv [data-v]");
+  if (vb){ pSel[pid] = vb.dataset.v; $$(`.pcard[data-p=${pid}] .pv button`).forEach(x => x.setAttribute("aria-pressed", x === vb)); return; }
+  const add = e.target.closest("[data-add]"); if (!add) return;
+  const item = {form:"prod", pid, v:pSel[pid] || "", qty:1};
+  const twin = bag.find(x => keyOf(x) === keyOf(item));
+  if (twin) twin.qty = Math.min(30, twin.qty + 1);
+  else bag.push({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ...item});
+  saveBag(); renderBag();
+  add.classList.add("done"); add.querySelector("span").textContent = "Na sacola ✓";
+  clearTimeout(add._t); add._t = setTimeout(() => { add.classList.remove("done"); add.querySelector("span").textContent = "Adicionar"; }, 1600);
+});
+
 $("#mcCancel").addEventListener("click", () => { Object.assign(mc, {extras:[], qty:1, editing:null}); renderMC(); });
 
 /* ===== Pedido ===== */
@@ -1270,7 +1411,11 @@ function toggleGroup(id, cb){
     $$(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)); cb && cb(b.dataset.v);
   });
 }
-toggleGroup("tgMode", v => { $("#addrBox").hidden = v !== "Delivery"; });
+toggleGroup("tgMode", v => {
+  $("#addrBox").hidden = v !== "Delivery";
+  $("#modeNote").textContent = v === "Delivery" ? "No delivery os drinks vão na garrafa de 1L." : "Na retirada você leva no copo ou na garrafa, como montou.";
+  renderBag();
+});
 toggleGroup("tgPay", v => { $("#trocoField").hidden = v !== "Dinheiro"; $("#obsField").hidden = v === "Dinheiro"; });
 const oErr = $("#oErr");
 function oInvalid(el, msg){ $$(".oform .invalid").forEach(x => x.classList.remove("invalid")); el.classList.add("invalid"); el.focus(); oErr.textContent = msg; return false; }
@@ -1291,8 +1436,8 @@ $("#orderForm").addEventListener("submit", e => {
     "*⚡ NOVO PEDIDO · HYPE DRINK*", "",
     `👤 *Cliente:* ${v("#oname")}`, "",
     "*🥤 Pedido*",
-    ...bag.map((it, i) => { const F = FORMS[it.form]; return `${i + 1}. ${it.qty}x ${F.nome}: ${compName(it.base, it.extras)} (${F.preco == null ? "a combinar" : fmt(F.preco * it.qty)})`; }), "",
-    `💰 *Total:* ${T.sum && T.kit ? `${fmt(T.sum)} + kit de sachês a combinar` : T.kit ? "a combinar" : fmt(T.sum)}`,
+    ...bag.map((it, i) => `${i + 1}. ${it.qty}x ${itemTitle(it, delivery && it.form === "cup")}${it.form === "prod" ? " (Herbalife)" : `: ${itemDesc(it)}`} · ${fmt(priceOf(it) * it.qty)}`), "",
+    `💰 *Total:* ${fmt(T.sum)}`,
     `💳 *Pagamento:* ${pay}${pay === "Dinheiro" && v("#troco") ? ` (troco para ${v("#troco")})` : ""}`, ""
   ];
   if (delivery){
@@ -1309,14 +1454,22 @@ $("#orderForm").addEventListener("submit", e => {
 });
 
 /* ===== Simulador (trabalhe conosco) ===== */
-const sim = {c:25, d:25, t:22};
+const sim = {c:10, d:30};
 function paint(r){ r.style.setProperty("--v", ((r.value - r.min) / (r.max - r.min) * 100) + "%"); }
+$("#qpick").innerHTML = [10, 20, 75, 100].map(n => `<button type="button" data-n="${n}"><b>${n} hypes/dia</b><span>${fmt0(n * 30 * LUCRO_HYPE)}/mês</span></button>`).join("");
+$("#qpick").addEventListener("click", e => {
+  const b = e.target.closest("[data-n]"); if (!b) return;
+  sim.c = +b.dataset.n; sim.d = 30;
+  $("#rC").value = sim.c; $("#rD").value = sim.d; paint($("#rC")); paint($("#rD")); updSim();
+});
 function updSim(){
-  const f = sim.c * sim.d * sim.t, l = f * MARGEM;
-  $("#vC").textContent = sim.c; $("#vD").textContent = sim.d; $("#vT").textContent = "R$ " + sim.t;
-  $("#oF").textContent = fmt0(f); $("#oL").textContent = fmt0(l); $("#oFd").textContent = fmt0(sim.c * sim.t) + " por dia";
+  const n = sim.c * sim.d;
+  $("#vC").textContent = sim.c; $("#vD").textContent = sim.d;
+  $("#oF").textContent = fmt0(n * FORMS.cup.preco); $("#oFd").textContent = `${n.toLocaleString("pt-BR")} hypes a ${fmt0(FORMS.cup.preco)}`;
+  $("#oL").textContent = fmt0(n * LUCRO_HYPE);
+  $$("#qpick button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.n === sim.c && sim.d === 30));
 }
-[["#rC","c"],["#rD","d"],["#rT","t"]].forEach(([s, k]) => { const r = $(s); paint(r); r.addEventListener("input", () => { sim[k] = +r.value; paint(r); updSim(); }); });
+[["#rC","c"],["#rD","d"]].forEach(([s, k]) => { const r = $(s); paint(r); r.addEventListener("input", () => { sim[k] = +r.value; paint(r); updSim(); }); });
 updSim();
 
 /* ===== Cadastro (trabalhe conosco) ===== */
@@ -1360,7 +1513,7 @@ $("#sNext").addEventListener("click", () => {
     `Nome: ${v("#sNome")}`, `WhatsApp: ${v("#sZap")}`, `Instagram: ${v("#sInsta") || "-"}`,
     `Cidade: ${v("#sCidade")}/${v("#sUF").toUpperCase()}`, `Bairro: ${v("#sBairro") || "-"}`,
     `Quer vender: ${r("sMod")}`, `Experiência: ${r("sExp")}`, `Começar: ${r("sQuando")}`,
-    `Simulação: ${sim.c} clientes/dia · ${sim.d} dias · ticket R$ ${sim.t} → ${$("#oF").textContent}/mês`,
+    `Simulação: ${sim.c} hypes/dia · ${sim.d} dias → lucro estimado ${$("#oL").textContent}/mês`,
     v("#sMsg") ? `\nSobre: ${v("#sMsg")}` : ""
   ].join("\n");
   const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
@@ -1390,7 +1543,7 @@ addEventListener("pointermove", e => cg.style.transform = `translate(${e.clientX
 const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } }), {threshold:.12});
 $$(".rv").forEach(el => io.observe(el));
 // barra fixa do celular: some nas seções que já têm os próprios botões (monte, pedido, trabalhe) e no rodapé
-const ctaZones = $$("#monte-copo,#pedido,#trabalhe,footer"), mcta = $("#mcta");
+const ctaZones = $$("#monte-copo,#produtos,#pedido,#trabalhe,footer"), mcta = $("#mcta");
 let scrollTick = 0;
 function onScroll(){
   scrollTick = 0;
