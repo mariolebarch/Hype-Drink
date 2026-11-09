@@ -4,7 +4,9 @@
 
 // InfiniteTag da Hype Drink (nome de usuário no app InfinitePay, sem o "$").
 // Pode ficar aqui ou na variável de ambiente INFINITEPAY_HANDLE do Netlify.
-const TAG = ""; // ex.: "hypefitdrink"
+const TAG = "jakeline-rodrigues-81y"; // InfiniteTag da conta da cliente (Conta Lojista CPF)
+// Produtos Herbalife ficam fora do pagamento online até a cliente confirmar os preços reais
+export const PRODS_ONLINE = false;
 export const HANDLE = (process.env.INFINITEPAY_HANDLE || TAG).replace(/^\$/, "").trim();
 
 export const FORMS = {cup: {nome: "Copo 1L", centavos: 3000}, bottle: {nome: "Garrafa 1L", centavos: 3000}};
@@ -30,6 +32,7 @@ export function itemParaCobranca(it, delivery){
   if (!(qty >= 1 && qty <= 30)) return null;
 
   if (it.form === "prod"){
+    if (!PRODS_ONLINE) return null;
     const p = PRODS[it.pid]; if (!p) return null;
     let desc = p.nome;
     if (p.var){ if (!p.var.includes(it.v)) return null; desc += ` ${it.v}`; }

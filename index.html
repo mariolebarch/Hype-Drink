@@ -981,7 +981,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 <script>
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
-const PAGAMENTO_ONLINE = false;           // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em netlify/lib/catalogo.mjs
+const PAGAMENTO_ONLINE = false;        // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em netlify/lib/catalogo.mjs
 const FORMS = {
   cup:    {nome:"Copo 1L",       preco:30.00},
   bottle: {nome:"Garrafa 1L",    preco:30.00},
@@ -1473,6 +1473,10 @@ $("#orderForm").addEventListener("submit", e => {
 // Pagamento online: o servidor (Netlify Function) calcula o valor e cria o link da InfinitePay
 let paying = false;
 async function payOnline(L, delivery, nome){
+  if (bag.some(it => it.form === "prod")){
+    oErr.textContent = "Os produtos Herbalife ainda não podem ser pagos online. Escolha Pix, Cartão ou Dinheiro para pagar na entrega, ou remova esses produtos da sacola.";
+    return;
+  }
   if (paying) return; paying = true;
   const btn = $("#oSubmit span"); btn.textContent = "Gerando pagamento…";
   try {
