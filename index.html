@@ -1523,6 +1523,11 @@ $("#orderForm").addEventListener("submit", e => {
 });
 // Pagamento online: o servidor (Netlify Function) calcula o valor e cria o link da InfinitePay
 let paying = false;
+// Ao voltar do checkout pelo botão "voltar", o navegador restaura a página congelada: destrava o botão
+addEventListener("pageshow", () => {
+  paying = false;
+  onPay(tgVal("tgPay"));
+});
 async function payOnline(L, delivery, nome){
   if (bag.some(it => it.form === "prod")){
     oErr.textContent = "Os produtos Herbalife ainda não podem ser pagos online. Escolha Dinheiro na retirada ou remova esses produtos da sacola.";
