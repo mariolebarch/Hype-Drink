@@ -35,6 +35,7 @@
   <table>
     <tr><th>Nome</th><th>Tipo</th><th>Para que serve</th><th>Duração</th></tr>
     <tr><td><code>hype_bag_v1</code></td><td>Armazenamento local (essencial)</td><td>Guardar os itens da sua sacola enquanto você navega.</td><td>Até você esvaziar a sacola ou limpar os dados</td></tr>
+    <tr><td><code>hype_pending_v1</code></td><td>Armazenamento local (essencial)</td><td>Guardar o resumo do pedido enquanto você paga online, para enviá-lo no WhatsApp quando voltar ao site.</td><td>Até o pedido ser enviado ou você limpar os dados</td></tr>
     <tr><td><code>hype_cookies_v1</code></td><td>Armazenamento local (essencial)</td><td>Lembrar que você já viu o aviso de cookies e suas preferências.</td><td>Até você limpar os dados</td></tr>
   </table>
 
@@ -42,6 +43,7 @@
   <ul>
     <li><b>Google Fonts:</b> carrega as fontes do site. Seu navegador se conecta aos servidores do Google, que podem registrar dados técnicos como o endereço IP.</li>
     <li><b>Netlify:</b> hospeda o site e pode registrar dados técnicos de acesso para funcionamento e segurança.</li>
+    <li><b>InfinitePay (CloudWalk):</b> quando você escolhe pagar online, é levado ao checkout da InfinitePay, que tem a própria política de privacidade e de cookies.</li>
     <li><b>WhatsApp e Instagram:</b> só são abertos quando você toca nos botões correspondentes; a partir daí valem as políticas desses serviços.</li>
   </ul>
 
@@ -70,7 +72,7 @@ document.getElementById("ckSave").addEventListener("click", () => {
   catch (e) { status.textContent = "Não foi possível salvar neste navegador."; }
 });
 document.getElementById("ckClear").addEventListener("click", () => {
-  try { localStorage.removeItem("hype_bag_v1"); localStorage.removeItem(CK); status.textContent = "Pronto: sacola e preferências apagadas deste navegador."; }
+  try { localStorage.removeItem("hype_bag_v1"); localStorage.removeItem("hype_pending_v1"); localStorage.removeItem(CK); status.textContent = "Pronto: sacola e preferências apagadas deste navegador."; }
   catch (e) { status.textContent = "Não foi possível apagar neste navegador."; }
 });
 </script>

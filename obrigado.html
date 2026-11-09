@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pagamento · Hype Fit Drink</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#07050d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/legal.css">
+<style>
+.paybox{max-width:560px;margin:0 auto;text-align:center;padding-top:8px}
+.paybox .ic{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:0 auto 22px;background:#a855f7;box-shadow:0 0 50px rgba(168,85,247,.6)}
+.paybox .ic svg{width:40px;height:40px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.paybox.wait .ic{background:rgba(255,255,255,.08);box-shadow:none}
+.paybox.wait .ic svg{animation:spin 1s linear infinite}
+.paybox.bad .ic{background:#d6365f;box-shadow:0 0 40px rgba(214,54,95,.45)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.paybox h1{margin-bottom:12px}
+.paybox .sum{display:inline-grid;grid-template-columns:auto auto;gap:6px 18px;text-align:left;margin:18px auto 26px;padding:16px 20px;border:1px solid rgba(255,255,255,.12);border-radius:16px;font-size:15px}
+.paybox .sum span{color:#a39cb8;font-family:"JetBrains Mono",monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;align-self:center}
+.paybox .acts{justify-content:center;flex-wrap:wrap}
+.paybox .small{font-size:13px;color:#a39cb8;margin-top:18px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a href="index.html" class="logo" aria-label="Hype Drink, página inicial"><span>HYPE</span><span>DR<svg viewBox="0 0 12 24" aria-hidden="true"><path d="M8 0 1 14h5l-2 10 8-14H7z"/></svg>NK</span></a>
+  <a href="index.html" class="back">← Voltar ao site</a>
+</div></header>
+
+<main>
+  <div class="paybox wait" id="box" aria-live="polite">
+    <div class="ic" id="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></svg></div>
+    <p class="eyebrow" id="eb">Pagamento</p>
+    <h1 id="tt">Confirmando seu pagamento…</h1>
+    <p id="tx">Só um instante, estamos conferindo com a InfinitePay.</p>
+    <div class="sum" id="sum" hidden></div>
+    <div class="acts">
+      <a class="btn" id="wa" href="#" target="_blank" rel="noopener" hidden>Enviar pedido no WhatsApp</a>
+      <a class="btn ghost" id="rc" href="#" target="_blank" rel="noopener" hidden>Ver comprovante</a>
+      <a class="btn ghost" id="bk" href="index.html#pedido" hidden>Voltar para a sacola</a>
+    </div>
+    <p class="small" id="sm" hidden></p>
+  </div>
+</main>
+
+<footer><a href="privacidade.html">Privacidade</a>·<a href="termos.html">Termos de Uso</a>·<a href="cookies.html">Cookies</a>·<a href="index.html">Voltar ao site</a></footer>
+
+<script>
+const WHATSAPP = "5531989691851";
+const $ = s => document.querySelector(s);
+const q = new URLSearchParams(location.search);
+const P = {order_nsu:q.get("order_nsu") || "", transaction_nsu:q.get("transaction_nsu") || "", slug:q.get("slug") || q.get("invoice_slug") || ""};
+const receipt = q.get("receipt_url") || "";
+let pend = null;
+try { pend = JSON.parse(localStorage.getItem("hype_pending_v1") || "null"); } catch (e) {}
+const fmt = c => (c / 100).toLocaleString("pt-BR", {style:"currency", currency:"BRL"});
+const safeUrl = u => { try { const x = new URL(u); return x.protocol === "https:" ? x.href : ""; } catch (e) { return ""; } };
+
+function state(kind, eb, tt, tx){
+  $("#box").className = "paybox " + kind;
+  $("#ic").innerHTML = kind === "ok" ? '<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>'
+    : kind === "bad" ? '<svg viewBox="0 0 24 24"><path d="M12 7v6M12 17h.01"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></svg>';
+  $("#eb").textContent = eb; $("#tt").textContent = tt; $("#tx").textContent = tx;
+}
+function waLink(text){ return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`; }
+
+async function run(){
+  if (!P.order_nsu || !P.transaction_nsu || !P.slug){
+    state("bad", "Pagamento", "Não encontramos os dados do pagamento", "Se você pagou, fale com a Hype no WhatsApp com o comprovante que a InfinitePay enviou.");
+    $("#wa").textContent = "Falar no WhatsApp"; $("#wa").href = waLink("Olá! Fiz um pagamento pelo site da Hype e preciso de ajuda."); $("#wa").hidden = false; $("#bk").hidden = false;
+    return;
+  }
+  let d = {};
+  try {
+    const r = await fetch("/api/pagamento", {method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(P)});
+    d = await r.json();
+  } catch (e) {}
+  const rec = safeUrl(receipt);
+  if (rec){ $("#rc").href = rec; $("#rc").hidden = false; }
+
+  if (d.pago){
+    state("ok", "Pagamento confirmado", "Pagamento aprovado!", "Agora é só enviar o pedido no WhatsApp pra Hype começar a preparar.");
+    const total = typeof d.valor === "number" ? fmt(d.valor) : pend && pend.total ? fmt(pend.total) : "";
+    $("#sum").innerHTML = `<span>Pedido</span><b></b><span>Valor</span><b>${total || "-"}</b><span>Forma</span><b>${d.metodo || "-"}</b>`;
+    $("#sum b").textContent = P.order_nsu; $("#sum").hidden = false;
+    const base = pend && pend.nsu === P.order_nsu ? pend.msg : "*⚡ NOVO PEDIDO · HYPE DRINK*";
+    const msg = base.replace("_Pedido enviado pelo site_", "").trimEnd() + "\n\n" +
+      `✅ *PAGO ONLINE* (${d.metodo || "InfinitePay"})${total ? ` · ${total}` : ""}\nPedido: ${P.order_nsu}` + (rec ? `\nComprovante: ${rec}` : "") + "\n\n_Pedido enviado pelo site_";
+    $("#wa").href = waLink(msg); $("#wa").hidden = false;
+    $("#sm").textContent = "Importante: toque em \"Enviar pedido no WhatsApp\" e envie a mensagem. É assim que a Hype recebe o seu endereço e os sabores."; $("#sm").hidden = false;
+    try { if (pend && pend.nsu === P.order_nsu){ localStorage.removeItem("hype_bag_v1"); } } catch (e) {}
+    $("#wa").addEventListener("click", () => { try { localStorage.removeItem("hype_pending_v1"); } catch (e) {} });
+  } else {
+    state("bad", "Pagamento", d.erro ? "Não conseguimos confirmar agora" : "Pagamento não confirmado",
+      d.erro ? "Tente atualizar a página em alguns segundos. Se o valor saiu da sua conta, fale com a Hype no WhatsApp." : "O pagamento ainda não aparece como aprovado. Se você pagou com cartão ou Pix, aguarde um pouco e atualize a página.");
+    $("#wa").textContent = "Falar no WhatsApp";
+    $("#wa").href = waLink(`Olá! Fiz um pagamento pelo site da Hype (pedido ${P.order_nsu}) e ele não apareceu como confirmado.` + (rec ? ` Comprovante: ${rec}` : ""));
+    $("#wa").hidden = false; $("#bk").hidden = false;
+  }
+}
+run();
+</script>
+</body>
+</html>

@@ -597,6 +597,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></symbol>
   <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V7a3 3 0 0 1 6 0v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.9 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></symbol>
 </svg>
 
@@ -807,7 +808,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
           <p class="fhint" id="modeNote">No delivery os drinks vão na garrafa de 1L.</p>
         </div>
         <div class="field"><span class="lb">Pagamento</span>
-          <div class="tg" id="tgPay"><button type="button" data-v="Pix" aria-pressed="true">Pix</button><button type="button" data-v="Cartão" aria-pressed="false">Cartão</button><button type="button" data-v="Dinheiro" aria-pressed="false">Dinheiro</button></div>
+          <div class="tg" id="tgPay"><button type="button" data-v="Online" aria-pressed="false" hidden>Online</button><button type="button" data-v="Pix" aria-pressed="true">Pix</button><button type="button" data-v="Cartão" aria-pressed="false">Cartão</button><button type="button" data-v="Dinheiro" aria-pressed="false">Dinheiro</button></div>
+          <p class="fhint" id="payNote">Você paga na entrega ou na retirada.</p>
         </div>
       </div>
       <fieldset class="addr" id="addrBox">
@@ -828,9 +830,9 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <p class="err" id="oErr" role="alert"></p>
       <div class="obar">
         <div class="tot"><span>Total</span><b id="total">R$ 0,00</b></div>
-        <button class="btn" type="submit"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Enviar pedido</button>
+        <button class="btn" type="submit" id="oSubmit"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg><span>Enviar pedido</span></button>
       </div>
-      <p class="note">A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. Seus dados são usados só para preparar e entregar o pedido. Veja a <a href="privacidade.html">Política de Privacidade</a>.</p>
+      <p class="note" id="oNote">A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. Seus dados são usados só para preparar e entregar o pedido. Veja a <a href="privacidade.html">Política de Privacidade</a>.</p>
     </form>
   </div>
 </section>
@@ -979,6 +981,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 <script>
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
+const PAGAMENTO_ONLINE = false;           // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em netlify/lib/catalogo.mjs
 const FORMS = {
   cup:    {nome:"Copo 1L",       preco:30.00},
   bottle: {nome:"Garrafa 1L",    preco:30.00},
@@ -1417,7 +1420,20 @@ toggleGroup("tgMode", v => {
   $("#modeNote").textContent = v === "Delivery" ? "No delivery os drinks vão na garrafa de 1L." : "Na retirada você leva no copo ou na garrafa, como montou.";
   renderBag();
 });
-toggleGroup("tgPay", v => { $("#trocoField").hidden = v !== "Dinheiro"; $("#obsField").hidden = v === "Dinheiro"; });
+const PAY_NOTES = {Online:"Pague agora com Pix ou cartão no checkout seguro da InfinitePay.", Pix:"Pix na entrega ou na retirada.", "Cartão":"Cartão na entrega ou na retirada.", Dinheiro:"Dinheiro na entrega ou na retirada."};
+function onPay(v){
+  $("#trocoField").hidden = v !== "Dinheiro"; $("#obsField").hidden = v === "Dinheiro";
+  $("#payNote").textContent = PAY_NOTES[v] || "";
+  const online = v === "Online";
+  $("#oSubmit span").textContent = online ? "Ir para o pagamento" : "Enviar pedido";
+  $("#oSubmit use").setAttribute("href", online ? "#i-lock" : "#i-wa");
+  $("#oNote").firstChild.textContent = online ? "Você paga no checkout da InfinitePay e, ao voltar pro site, envia o pedido já pago no WhatsApp da Hype. " : "A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. ";
+}
+toggleGroup("tgPay", onPay);
+if (PAGAMENTO_ONLINE){
+  const b = $("#tgPay [data-v=Online]"); b.hidden = false;
+  $$("#tgPay button").forEach(x => x.setAttribute("aria-pressed", x === b)); onPay("Online");
+} else onPay("Pix");
 const oErr = $("#oErr");
 function oInvalid(el, msg){ $$(".oform .invalid").forEach(x => x.classList.remove("invalid")); el.classList.add("invalid"); el.focus(); oErr.textContent = msg; return false; }
 $("#orderForm").addEventListener("input", e => { e.target.classList.remove("invalid"); oErr.textContent = ""; });
@@ -1439,7 +1455,7 @@ $("#orderForm").addEventListener("submit", e => {
     "*🥤 Pedido*",
     ...bag.map((it, i) => `${i + 1}. ${it.qty}x ${itemTitle(it, delivery && it.form === "cup")}${it.form === "prod" ? " (Herbalife)" : `: ${itemDesc(it)}`} · ${fmt(priceOf(it) * it.qty)}`), "",
     `💰 *Total:* ${fmt(T.sum)}`,
-    `💳 *Pagamento:* ${pay}${pay === "Dinheiro" && v("#troco") ? ` (troco para ${v("#troco")})` : ""}`, ""
+    `💳 *Pagamento:* ${pay === "Online" ? "Online pela InfinitePay" : pay}${pay === "Dinheiro" && v("#troco") ? ` (troco para ${v("#troco")})` : ""}`, ""
   ];
   if (delivery){
     L.push("*🛵 Entrega*",
@@ -1451,8 +1467,26 @@ $("#orderForm").addEventListener("submit", e => {
   }
   if (pay !== "Dinheiro" && v("#obs")) L.push("", `📝 *Obs.:* ${v("#obs")}`);
   L.push("", "_Pedido enviado pelo site_");
+  if (pay === "Online") return payOnline(L, delivery, v("#oname"));
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(L.join("\n"))}`, "_blank");
 });
+// Pagamento online: o servidor (Netlify Function) calcula o valor e cria o link da InfinitePay
+let paying = false;
+async function payOnline(L, delivery, nome){
+  if (paying) return; paying = true;
+  const btn = $("#oSubmit span"); btn.textContent = "Gerando pagamento…";
+  try {
+    const r = await fetch("/api/checkout", {method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({delivery, nome, items: bag.map(({form, base, extras, kit, pronto, pid, v, qty}) => ({form, base, extras, kit, pronto, pid, v, qty}))})});
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.url) throw new Error(d.erro || "Não foi possível gerar o pagamento agora.");
+    try { localStorage.setItem("hype_pending_v1", JSON.stringify({nsu:d.nsu, msg:L.join("\n"), total:d.total, em:Date.now()})); } catch (e) {}
+    location.href = d.url;
+  } catch (e) {
+    oErr.textContent = `${e.message} Escolha Pix, Cartão ou Dinheiro para pagar na entrega, ou tente de novo.`;
+    btn.textContent = "Ir para o pagamento"; paying = false;
+  }
+}
 
 /* ===== Simulador (trabalhe conosco) ===== */
 const sim = {c:10, d:30};
