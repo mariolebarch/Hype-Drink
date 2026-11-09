@@ -337,7 +337,16 @@ textarea{min-height:96px;resize:vertical}
 .addr legend{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:7px;padding:0}
 .addr[hidden]{display:none}
 .agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.a-rua{grid-column:span 3}.a-bai,.a-comp{grid-column:span 2}.a-ref{grid-column:1/-1}
+.a-rua{grid-column:span 3}.a-bai,.a-comp,.a-cep,.a-cid{grid-column:span 2}.a-ref{grid-column:1/-1}
+.a-cep{position:relative}
+.cepst{position:absolute;right:12px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;pointer-events:none}
+.cepst.load{border:2px solid var(--line2);border-top-color:var(--p);animation:spin .8s linear infinite}
+.cepst.ok{background:#1f9d55;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 5 5 9-10' fill='none' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E") center/14px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 5 5 9-10' fill='none' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E") center/14px no-repeat;border-radius:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cepmsg{grid-column:1/-1;font-size:12.5px;color:var(--mute);margin:-2px 0 0}
+.cepmsg:empty{display:none}
+.cepmsg.bad{color:#ff7a9a}
+.cepmsg a{color:var(--p3)}
 .obar{display:flex;align-items:center;gap:16px;border-top:1px solid var(--line);padding-top:16px}
 .obar .tot span{display:block;font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em}
 .obar .tot b{font-size:32px;font-weight:900;font-variation-settings:"wdth" 70;line-height:1;white-space:nowrap}
@@ -815,6 +824,9 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <fieldset class="addr" id="addrBox">
         <legend class="lb">Endereço de entrega</legend>
         <div class="agrid">
+          <div class="a-cep"><input id="aCep" placeholder="CEP *" inputmode="numeric" autocomplete="postal-code" maxlength="9" aria-label="CEP" aria-describedby="cepMsg"><span class="cepst" id="cepSt" aria-hidden="true"></span></div>
+          <input id="aCid" class="a-cid" placeholder="Cidade *" autocomplete="address-level2" aria-label="Cidade">
+          <p class="cepmsg" id="cepMsg" role="status"></p>
           <input id="aRua" class="a-rua" placeholder="Rua / avenida *" autocomplete="address-line1" aria-label="Rua">
           <input id="aNum" class="a-num" placeholder="Nº *" inputmode="numeric" aria-label="Número">
           <input id="aBairro" class="a-bai" placeholder="Bairro *" autocomplete="address-level3" aria-label="Bairro">
@@ -1440,6 +1452,37 @@ function onPay(v){
 toggleGroup("tgPay", onPay);
 onPay("Pix");
 const oErr = $("#oErr");
+// CEP: ao digitar os 8 números, busca no ViaCEP e preenche rua, bairro e cidade
+let cepSeq = 0;
+$("#aCep").addEventListener("input", e => {
+  const d = e.target.value.replace(/\D/g, "").slice(0, 8);
+  e.target.value = d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d;
+  const st = $("#cepSt"), msg = $("#cepMsg");
+  st.className = "cepst"; msg.textContent = ""; msg.className = "cepmsg";
+  if (d.length === 8) buscaCep(d);
+});
+async function buscaCep(cep){
+  const seq = ++cepSeq, st = $("#cepSt"), msg = $("#cepMsg");
+  st.className = "cepst load";
+  try {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {signal: ctl.signal});
+    clearTimeout(t);
+    const d = await r.json();
+    if (seq !== cepSeq) return;
+    if (!r.ok || d.erro) throw new Error("nao");
+    const set = (id, val) => { if (val){ $(id).value = val; $(id).classList.remove("invalid"); } };
+    set("#aRua", d.logradouro); set("#aBairro", d.bairro); set("#aCid", `${d.localidade}/${d.uf}`);
+    st.className = "cepst ok"; msg.textContent = ""; msg.className = "cepmsg";
+    if (!d.logradouro){ msg.textContent = "CEP da cidade inteira: digite a rua e o bairro."; $("#aRua").focus(); }
+    else $("#aNum").focus();
+  } catch (err) {
+    if (seq !== cepSeq) return;
+    st.className = "cepst";
+    msg.className = "cepmsg bad";
+    msg.innerHTML = 'Não encontramos esse CEP. Confira os números ou preencha o endereço à mão. <a href="https://buscacepinter.correios.com.br/" target="_blank" rel="noopener">Não sei meu CEP</a>';
+  }
+}
 function oInvalid(el, msg){ $$(".oform .invalid").forEach(x => x.classList.remove("invalid")); el.classList.add("invalid"); el.focus(); oErr.textContent = msg; return false; }
 $("#orderForm").addEventListener("input", e => { e.target.classList.remove("invalid"); oErr.textContent = ""; });
 $("#orderForm").addEventListener("submit", e => {
@@ -1449,6 +1492,8 @@ $("#orderForm").addEventListener("submit", e => {
   if (!bag.length){ oErr.textContent = "Sua sacola está vazia. Monte seu copo e adicione à sacola antes de enviar."; $("#bag").scrollIntoView({behavior:"smooth", block:"center"}); return; }
   if (!v("#oname")) return oInvalid($("#oname"), "Digite seu nome.");
   if (delivery){
+    if (v("#aCep").replace(/\D/g, "").length !== 8) return oInvalid($("#aCep"), "Digite o CEP com 8 números.");
+    if (!v("#aCid")) return oInvalid($("#aCid"), "Digite a cidade.");
     if (!v("#aRua")) return oInvalid($("#aRua"), "Digite a rua da entrega.");
     if (!v("#aNum")) return oInvalid($("#aNum"), "Digite o número.");
     if (!v("#aBairro")) return oInvalid($("#aBairro"), "Digite o bairro.");
@@ -1465,7 +1510,8 @@ $("#orderForm").addEventListener("submit", e => {
   if (delivery){
     L.push("*🛵 Entrega*",
       `${v("#aRua")}, nº ${v("#aNum")}${v("#aComp") ? ` · ${v("#aComp")}` : ""}`,
-      `Bairro: ${v("#aBairro")}`);
+      `Bairro: ${v("#aBairro")}`,
+      `${v("#aCid")} · CEP ${v("#aCep")}`);
     if (v("#aRef")) L.push(`Referência: ${v("#aRef")}`);
   } else {
     L.push("*🏪 Retirada no local*");
