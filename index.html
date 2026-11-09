@@ -808,7 +808,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
           <p class="fhint" id="modeNote">No delivery os drinks vão na garrafa de 1L.</p>
         </div>
         <div class="field"><span class="lb">Pagamento</span>
-          <div class="tg" id="tgPay"><button type="button" data-v="Online" aria-pressed="false" hidden>Online</button><button type="button" data-v="Pix" aria-pressed="true">Pix</button><button type="button" data-v="Cartão" aria-pressed="false">Cartão</button><button type="button" data-v="Dinheiro" aria-pressed="false">Dinheiro</button></div>
+          <div class="tg" id="tgPay"><button type="button" data-v="Pix" aria-pressed="true">Pix</button><button type="button" data-v="Cartão" aria-pressed="false">Cartão</button><button type="button" data-v="Dinheiro" aria-pressed="false">Dinheiro</button></div>
           <p class="fhint" id="payNote">Você paga na entrega ou na retirada.</p>
         </div>
       </div>
@@ -1415,25 +1415,30 @@ function toggleGroup(id, cb){
     $$(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x === b)); cb && cb(b.dataset.v);
   });
 }
-toggleGroup("tgMode", v => {
+// Regras de pagamento: Pix e cartão são pagos online (InfinitePay); dinheiro só na retirada
+const pressTg = (id, val) => $$(`#${id} button`).forEach(x => x.setAttribute("aria-pressed", x.dataset.v === val));
+const isOnlinePay = v => PAGAMENTO_ONLINE && v !== "Dinheiro";
+function onMode(v){
   $("#addrBox").hidden = v !== "Delivery";
   $("#modeNote").textContent = v === "Delivery" ? "No delivery os drinks vão na garrafa de 1L." : "Na retirada você leva no copo ou na garrafa, como montou.";
+  if (v === "Delivery" && tgVal("tgPay") === "Dinheiro"){ pressTg("tgPay", "Pix"); onPay("Pix"); }
   renderBag();
-});
-const PAY_NOTES = {Online:"Pague agora com Pix ou cartão no checkout seguro da InfinitePay.", Pix:"Pix na entrega ou na retirada.", "Cartão":"Cartão na entrega ou na retirada.", Dinheiro:"Dinheiro na entrega ou na retirada."};
+}
+toggleGroup("tgMode", onMode);
+const PAY_NOTES = PAGAMENTO_ONLINE
+  ? {Pix:"Pague agora com Pix no checkout seguro da InfinitePay.", "Cartão":"Pague agora com cartão de crédito no checkout seguro da InfinitePay.", Dinheiro:"Dinheiro só na retirada: você paga quando buscar o pedido."}
+  : {Pix:"Pix na entrega ou na retirada.", "Cartão":"Cartão na entrega ou na retirada.", Dinheiro:"Dinheiro na retirada."};
 function onPay(v){
+  if (v === "Dinheiro" && tgVal("tgMode") === "Delivery"){ pressTg("tgMode", "Retirada"); onMode("Retirada"); }
   $("#trocoField").hidden = v !== "Dinheiro"; $("#obsField").hidden = v === "Dinheiro";
   $("#payNote").textContent = PAY_NOTES[v] || "";
-  const online = v === "Online";
+  const online = isOnlinePay(v);
   $("#oSubmit span").textContent = online ? "Ir para o pagamento" : "Enviar pedido";
   $("#oSubmit use").setAttribute("href", online ? "#i-lock" : "#i-wa");
-  $("#oNote").firstChild.textContent = online ? "Você paga no checkout da InfinitePay e, ao voltar pro site, envia o pedido já pago no WhatsApp da Hype. " : "A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. ";
+  $("#oNote").firstChild.textContent = online ? "Você paga no checkout da InfinitePay e, ao voltar pro site, envia o pedido já pago no WhatsApp da Hype. " : "A mensagem abre pronta no WhatsApp da Hype e você paga em dinheiro na retirada. ";
 }
 toggleGroup("tgPay", onPay);
-if (PAGAMENTO_ONLINE){
-  const b = $("#tgPay [data-v=Online]"); b.hidden = false;
-  $$("#tgPay button").forEach(x => x.setAttribute("aria-pressed", x === b)); onPay("Online");
-} else onPay("Pix");
+onPay("Pix");
 const oErr = $("#oErr");
 function oInvalid(el, msg){ $$(".oform .invalid").forEach(x => x.classList.remove("invalid")); el.classList.add("invalid"); el.focus(); oErr.textContent = msg; return false; }
 $("#orderForm").addEventListener("input", e => { e.target.classList.remove("invalid"); oErr.textContent = ""; });
@@ -1455,7 +1460,7 @@ $("#orderForm").addEventListener("submit", e => {
     "*🥤 Pedido*",
     ...bag.map((it, i) => `${i + 1}. ${it.qty}x ${itemTitle(it, delivery && it.form === "cup")}${it.form === "prod" ? " (Herbalife)" : `: ${itemDesc(it)}`} · ${fmt(priceOf(it) * it.qty)}`), "",
     `💰 *Total:* ${fmt(T.sum)}`,
-    `💳 *Pagamento:* ${pay === "Online" ? "Online pela InfinitePay" : pay}${pay === "Dinheiro" && v("#troco") ? ` (troco para ${v("#troco")})` : ""}`, ""
+    `💳 *Pagamento:* ${isOnlinePay(pay) ? `${pay === "Cartão" ? "Cartão de crédito" : "Pix"} online (InfinitePay)` : pay === "Dinheiro" ? "Dinheiro na retirada" : pay}${pay === "Dinheiro" && v("#troco") ? ` (troco para ${v("#troco")})` : ""}`, ""
   ];
   if (delivery){
     L.push("*🛵 Entrega*",
@@ -1467,14 +1472,14 @@ $("#orderForm").addEventListener("submit", e => {
   }
   if (pay !== "Dinheiro" && v("#obs")) L.push("", `📝 *Obs.:* ${v("#obs")}`);
   L.push("", "_Pedido enviado pelo site_");
-  if (pay === "Online") return payOnline(L, delivery, v("#oname"));
+  if (isOnlinePay(pay)) return payOnline(L, delivery, v("#oname"));
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(L.join("\n"))}`, "_blank");
 });
 // Pagamento online: o servidor (Netlify Function) calcula o valor e cria o link da InfinitePay
 let paying = false;
 async function payOnline(L, delivery, nome){
   if (bag.some(it => it.form === "prod")){
-    oErr.textContent = "Os produtos Herbalife ainda não podem ser pagos online. Escolha Pix, Cartão ou Dinheiro para pagar na entrega, ou remova esses produtos da sacola.";
+    oErr.textContent = "Os produtos Herbalife ainda não podem ser pagos online. Escolha Dinheiro na retirada ou remova esses produtos da sacola.";
     return;
   }
   if (paying) return; paying = true;
@@ -1487,7 +1492,7 @@ async function payOnline(L, delivery, nome){
     try { localStorage.setItem("hype_pending_v1", JSON.stringify({nsu:d.nsu, msg:L.join("\n"), total:d.total, em:Date.now()})); } catch (e) {}
     location.href = d.url;
   } catch (e) {
-    oErr.textContent = `${e.message} Escolha Pix, Cartão ou Dinheiro para pagar na entrega, ou tente de novo.`;
+    oErr.textContent = `${e.message} Tente de novo em instantes ou escolha Dinheiro na retirada.`;
     btn.textContent = "Ir para o pagamento"; paying = false;
   }
 }
