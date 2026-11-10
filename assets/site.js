@@ -16,16 +16,18 @@ const KITS = [
 // "var" = opções do produto: lista de sabores (mesmo preço) ou de tamanhos com preço próprio {v, preco}.
 // Ao mudar preços aqui, mude também em netlify/lib/catalogo.mjs (é o valor que o servidor cobra).
 const PRODS = [
-  {id:"cr7",    nome:"CR7 Drive",          det:"Pote 810 g · eletrólitos, carboidratos e vitaminas", img:"assets/hl-cr7-drive.webp",          preco:243.00},
-  {id:"liftoff",nome:"LiftOff",            det:"Caixa com 15 sachês · cafeína, taurina e vitaminas",  img:"assets/hl-liftoff.webp",            preco:196.00, varNome:"Sabor", var:["Limão","Abacaxi","Amora"]},
-  {id:"herbal", nome:"Herbal Concentrate", det:"Chá verde, chá preto, malva, hibisco e cardamomo",    img:"assets/hl-herbal-concentrate.webp", varNome:"Tamanho",
+  {id:"cr7",    nome:"CR7 Drive",          det:"Pote 810 g · eletrólitos, carboidratos e vitaminas", img:"assets/prod-cr7.webp",            preco:243.00},
+  {id:"liftoff",nome:"LiftOff",            det:"Caixa com 15 sachês · cafeína, taurina e vitaminas",  img:"assets/prod-liftoff-limao.webp",   preco:196.00, varNome:"Sabor", var:["Limão","Abacaxi","Amora"], escolher:true,
+    imgs:{"Limão":"assets/prod-liftoff-limao.webp", "Abacaxi":"assets/prod-liftoff-abacaxi.webp", "Amora":"assets/prod-liftoff-amora.webp"}},
+  {id:"herbal", nome:"Herbal Concentrate", det:"Chá verde, chá preto, malva, hibisco e cardamomo",    img:"assets/prod-herbal.webp",         varNome:"Tamanho",
     var:[{v:"50 g", preco:222.00}, {v:"102 g", preco:264.00}, {v:"357 g", preco:1072.00}]},
-  {id:"nrg",    nome:"N.R.G.",             det:"Chá preto e guaraná",                                img:"assets/hl-nrg.webp",                varNome:"Tamanho",
+  {id:"nrg",    nome:"N.R.G.",             det:"Chá preto e guaraná",                                img:"assets/prod-nrg.webp",            varNome:"Tamanho",
     var:[{v:"60 g", preco:159.00}, {v:"100 g", preco:252.00}, {v:"330 g", preco:668.00}]}
 ];
 // nomes das opções e preço de um produto na opção escolhida
 const varNomes = P => P.var ? P.var.map(o => typeof o === "string" ? o : o.v) : null;
 const prodPreco = (P, v) => { const o = P.var && P.var.find(o => typeof o === "object" && o.v === v); return o ? o.preco : P.preco; };
+const prodImg = (P, v) => (P.imgs && P.imgs[v]) || P.img; // foto da opção escolhida (ex.: sabor do LiftOff)
 const LUCRO_HYPE = 7.20; // lucro por drink usado pela Hype Drink (10 hypes/dia × 30 dias = R$ 2.160)
 // Bases do cardápio Hype Drink Fit
 const BASES = [
@@ -350,7 +352,7 @@ function bagTotals(){
 function renderBag(){
   const T = bagTotals(), deliv = isDeliv();
   $("#bag").innerHTML = bag.length ? bag.map(it => {
-    const sw = it.form === "prod" ? `<img class="sw ph" src="${prodOf(it.pid).img}" alt="" width="28" height="35">`
+    const sw = it.form === "prod" ? `<img class="sw ph" src="${prodImg(prodOf(it.pid), it.v)}" alt="" width="28" height="35">`
       : `<i class="sw" style="background:${gradCss(stopsFor(it.base, it.extras))}"></i>`;
     const swapped = deliv && it.form === "cup";
     return `<div class="bitem" data-id="${it.id}">
@@ -415,14 +417,18 @@ $("#mcToast").addEventListener("click", e => {
   if (e.target.closest("a")) $("#mcToast").hidden = true;
 });
 /* ===== Produtos Herbalife ===== */
+// pSel: opção escolhida em cada card. Produtos com "escolher" (LiftOff) começam sem sabor marcado
+// e mostram as fotos dos sabores em carrossel até a pessoa escolher um.
 const pSel = {};
 $("#pgrid").innerHTML = PRODS.map(p => {
   const ops = varNomes(p);
-  if (ops) pSel[p.id] = ops[0];
+  if (ops && !p.escolher) pSel[p.id] = ops[0];
+  const fotos = p.imgs ? ops.map((v, i) => `<img src="${p.imgs[v]}" alt="${p.nome} sabor ${v} Herbalife" data-v="${v}" class="${i ? "" : "on"}" width="720" height="900" loading="lazy">`).join("")
+    : `<img src="${p.img}" alt="${p.nome} Herbalife" width="720" height="900" loading="lazy">`;
   return `<article class="pcard rv" data-p="${p.id}">
-    <figure><img src="${p.img}" alt="${p.nome} Herbalife" width="480" height="600" loading="lazy"></figure>
+    <figure${p.imgs ? ' class="fotos"' : ""}>${fotos}</figure>
     <div class="pb"><span class="tag">Herbalife</span><h3>${p.nome}</h3><p>${p.det}</p>
-      ${ops ? `<div class="pv" role="group" aria-label="${p.varNome}">${ops.map((v, i) => `<button type="button" data-v="${v}" aria-pressed="${i === 0}">${v}</button>`).join("")}</div>` : ""}
+      ${ops ? `<div class="pv" role="group" aria-label="${p.varNome}">${ops.map(v => `<button type="button" data-v="${v}" aria-pressed="${pSel[p.id] === v}">${v}</button>`).join("")}</div>` : ""}
       <div class="pf"><b>${fmt(prodPreco(p, ops && ops[0]))}</b><button type="button" class="btn sm" data-add><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg><span>Adicionar</span></button></div>
     </div></article>`;
 }).join("");
@@ -432,9 +438,19 @@ $("#pgrid").addEventListener("click", e => {
   if (vb){
     pSel[pid] = vb.dataset.v; $$(`.pcard[data-p=${pid}] .pv button`).forEach(x => x.setAttribute("aria-pressed", x === vb));
     card.querySelector(".pf b").textContent = fmt(prodPreco(prodOf(pid), pSel[pid]));
+    card.querySelector(".pv").classList.remove("pede");
+    if (card._carrossel){ clearInterval(card._carrossel); card._carrossel = 0; }
+    mostraFoto(card, pSel[pid]);
     return;
   }
   const add = e.target.closest("[data-add]"); if (!add) return;
+  if (prodOf(pid).escolher && !pSel[pid]){
+    // ainda não escolheu o sabor: destaca as opções em vez de adicionar
+    const pv = card.querySelector(".pv"); pv.classList.remove("pede"); void pv.offsetWidth; pv.classList.add("pede");
+    add.querySelector("span").textContent = "Escolha o sabor";
+    clearTimeout(add._t); add._t = setTimeout(() => { add.querySelector("span").textContent = "Adicionar"; }, 1600);
+    return;
+  }
   const item = {form:"prod", pid, v:pSel[pid] || "", qty:1};
   const twin = bag.find(x => keyOf(x) === keyOf(item));
   if (twin) twin.qty = Math.min(30, twin.qty + 1);
@@ -443,6 +459,22 @@ $("#pgrid").addEventListener("click", e => {
   add.classList.add("done"); add.querySelector("span").textContent = "Na sacola ✓";
   clearTimeout(add._t); add._t = setTimeout(() => { add.classList.remove("done"); add.querySelector("span").textContent = "Adicionar"; }, 1600);
 });
+// troca a foto visível do card (as fotos ficam empilhadas e mudam com fade)
+function mostraFoto(card, v){
+  card.querySelectorAll("figure.fotos img").forEach(img => img.classList.toggle("on", img.dataset.v === v));
+}
+// carrossel das fotos dos sabores: só roda com o card na tela e enquanto nenhum sabor foi escolhido
+const vistaCarrossel = new IntersectionObserver(es => es.forEach(en => {
+  const card = en.target, pid = card.dataset.p;
+  if (en.isIntersecting && !pSel[pid] && !card._carrossel){
+    card._carrossel = setInterval(() => {
+      const fotos = [...card.querySelectorAll("figure.fotos img")];
+      const i = fotos.findIndex(f => f.classList.contains("on"));
+      mostraFoto(card, fotos[(i + 1) % fotos.length].dataset.v);
+    }, 2200);
+  } else if (!en.isIntersecting && card._carrossel){ clearInterval(card._carrossel); card._carrossel = 0; }
+}), {threshold:.25});
+$$(".pcard").forEach(card => { if (card.querySelector("figure.fotos")) vistaCarrossel.observe(card); });
 
 $("#mcCancel").addEventListener("click", () => { Object.assign(mc, {extras:[], qty:1, editing:null}); renderMC(); });
 
