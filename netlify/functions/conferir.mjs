@@ -1,4 +1,5 @@
 // POST /api/conferir  → a equipe confere um pedido pago que chegou no WhatsApp (página conferir.html).
+// versão do catálogo: 2026-11-10 (mudar esta linha quando alterar netlify/lib/catalogo.mjs, para o Netlify reempacotar a função)
 // O link traz os itens do pedido. O servidor recalcula o valor desses itens com os preços do catálogo e
 // compara com o valor que a InfinitePay diz ter recebido. Se o cliente mexer nos itens, o valor não bate.
 import {HANDLE, campoOk, cobrar, consultar, json, lerJson, excedeu, muitas} from "../lib/catalogo.mjs";

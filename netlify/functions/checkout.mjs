@@ -1,4 +1,5 @@
 // POST /api/checkout  → cria o link de pagamento da InfinitePay (Pix ou cartão) para a sacola.
+// versão do catálogo: 2026-11-10 (mudar esta linha quando alterar netlify/lib/catalogo.mjs, para o Netlify reempacotar a função)
 import {HANDLE, cobrar, json, lerJson, excedeu, muitas} from "../lib/catalogo.mjs";
 
 export const config = {
