@@ -12,13 +12,20 @@ const KITS = [
   {id:"k7", n:7, preco:180.00},
   {id:"k8", n:8, preco:200.00}
 ];
-// Produtos Herbalife vendidos avulsos. ATENÇÃO: preços fictícios, trocar pelos valores reais da cliente
+// Produtos Herbalife vendidos avulsos (preços passados pela cliente em 10/11/2026).
+// "var" = opções do produto: lista de sabores (mesmo preço) ou de tamanhos com preço próprio {v, preco}.
+// Ao mudar preços aqui, mude também em netlify/lib/catalogo.mjs (é o valor que o servidor cobra).
 const PRODS = [
-  {id:"cr7",    nome:"CR7 Drive",          det:"Pote 810 g · eletrólitos, carboidratos e vitaminas", img:"assets/hl-cr7-drive.webp",          preco:249.90},
-  {id:"liftoff",nome:"LiftOff",            det:"Caixa com 15 sachês · cafeína, taurina e vitaminas",  img:"assets/hl-liftoff.webp",            preco:149.90, var:["Limão","Abacaxi","Amora"]},
-  {id:"herbal", nome:"Herbal Concentrate", det:"Chá verde, chá preto, malva, hibisco e cardamomo",    img:"assets/hl-herbal-concentrate.webp", preco:139.90},
-  {id:"nrg",    nome:"N.R.G.",             det:"Chá preto e guaraná",                                img:"assets/hl-nrg.webp",                preco:119.90}
+  {id:"cr7",    nome:"CR7 Drive",          det:"Pote 810 g · eletrólitos, carboidratos e vitaminas", img:"assets/hl-cr7-drive.webp",          preco:243.00},
+  {id:"liftoff",nome:"LiftOff",            det:"Caixa com 15 sachês · cafeína, taurina e vitaminas",  img:"assets/hl-liftoff.webp",            preco:196.00, varNome:"Sabor", var:["Limão","Abacaxi","Amora"]},
+  {id:"herbal", nome:"Herbal Concentrate", det:"Chá verde, chá preto, malva, hibisco e cardamomo",    img:"assets/hl-herbal-concentrate.webp", varNome:"Tamanho",
+    var:[{v:"50 g", preco:222.00}, {v:"102 g", preco:264.00}, {v:"357 g", preco:1072.00}]},
+  {id:"nrg",    nome:"N.R.G.",             det:"Chá preto e guaraná",                                img:"assets/hl-nrg.webp",                varNome:"Tamanho",
+    var:[{v:"60 g", preco:159.00}, {v:"100 g", preco:252.00}, {v:"330 g", preco:668.00}]}
 ];
+// nomes das opções e preço de um produto na opção escolhida
+const varNomes = P => P.var ? P.var.map(o => typeof o === "string" ? o : o.v) : null;
+const prodPreco = (P, v) => { const o = P.var && P.var.find(o => typeof o === "object" && o.v === v); return o ? o.preco : P.preco; };
 const LUCRO_HYPE = 7.20; // lucro por drink usado pela Hype Drink (10 hypes/dia × 30 dias = R$ 2.160)
 // Bases do cardápio Hype Drink Fit
 const BASES = [
@@ -309,7 +316,7 @@ try {
     (it.form === "prod" ? !!prodOf(it.pid) : !!FORMS[it.form] && BASES.some(b => b.id === it.base)));
   bag.forEach(it => {
     if (typeof it.id !== "string" || !/^[a-z0-9]{1,20}$/i.test(it.id)) it.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    if (it.form === "prod"){ const P = prodOf(it.pid); if (!(P.var && P.var.includes(it.v))) it.v = P.var ? P.var[0] : undefined; return; }
+    if (it.form === "prod"){ const P = prodOf(it.pid), ops = varNomes(P); if (!(ops && ops.includes(it.v))) it.v = ops ? ops[0] : undefined; return; }
     if (it.form === "kit"){ it.kit = kitOf(it.kit).id; if (typeof it.pronto !== "boolean") it.pronto = true; }
     it.extras = Array.isArray(it.extras) ? [...new Set(it.extras)].filter(x => x !== it.base && extraOf(x)) : [];
   });
@@ -319,7 +326,7 @@ const keyOf = it => it.form === "prod" ? ["prod", it.pid, it.v || ""].join("|")
   : [it.form, it.base, [...it.extras].sort().join(","), it.form === "kit" ? `${it.kit}:${it.pronto ? 1 : 0}` : ""].join("|");
 // preço unitário de qualquer item da sacola
 function priceOf(it){
-  if (it.form === "prod") return prodOf(it.pid).preco;
+  if (it.form === "prod") return prodPreco(prodOf(it.pid), it.v);
   if (it.form === "kit") return kitOf(it.kit).preco;
   return FORMS[it.form].preco;
 }
@@ -410,18 +417,23 @@ $("#mcToast").addEventListener("click", e => {
 /* ===== Produtos Herbalife ===== */
 const pSel = {};
 $("#pgrid").innerHTML = PRODS.map(p => {
-  if (p.var) pSel[p.id] = p.var[0];
+  const ops = varNomes(p);
+  if (ops) pSel[p.id] = ops[0];
   return `<article class="pcard rv" data-p="${p.id}">
     <figure><img src="${p.img}" alt="${p.nome} Herbalife" width="480" height="600" loading="lazy"></figure>
     <div class="pb"><span class="tag">Herbalife</span><h3>${p.nome}</h3><p>${p.det}</p>
-      ${p.var ? `<div class="pv" role="group" aria-label="Sabor">${p.var.map((v, i) => `<button type="button" data-v="${v}" aria-pressed="${i === 0}">${v}</button>`).join("")}</div>` : ""}
-      <div class="pf"><b>${fmt(p.preco)}</b><button type="button" class="btn sm" data-add><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg><span>Adicionar</span></button></div>
+      ${ops ? `<div class="pv" role="group" aria-label="${p.varNome}">${ops.map((v, i) => `<button type="button" data-v="${v}" aria-pressed="${i === 0}">${v}</button>`).join("")}</div>` : ""}
+      <div class="pf"><b>${fmt(prodPreco(p, ops && ops[0]))}</b><button type="button" class="btn sm" data-add><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg><span>Adicionar</span></button></div>
     </div></article>`;
 }).join("");
 $("#pgrid").addEventListener("click", e => {
   const card = e.target.closest(".pcard"); if (!card) return;
   const pid = card.dataset.p, vb = e.target.closest(".pv [data-v]");
-  if (vb){ pSel[pid] = vb.dataset.v; $$(`.pcard[data-p=${pid}] .pv button`).forEach(x => x.setAttribute("aria-pressed", x === vb)); return; }
+  if (vb){
+    pSel[pid] = vb.dataset.v; $$(`.pcard[data-p=${pid}] .pv button`).forEach(x => x.setAttribute("aria-pressed", x === vb));
+    card.querySelector(".pf b").textContent = fmt(prodPreco(prodOf(pid), pSel[pid]));
+    return;
+  }
   const add = e.target.closest("[data-add]"); if (!add) return;
   const item = {form:"prod", pid, v:pSel[pid] || "", qty:1};
   const twin = bag.find(x => keyOf(x) === keyOf(item));
@@ -544,10 +556,6 @@ addEventListener("pageshow", () => {
   onPay(tgVal("tgPay"));
 });
 async function payOnline(L, delivery, nome){
-  if (bag.some(it => it.form === "prod")){
-    oErr.textContent = "Os produtos Herbalife ainda não podem ser pagos online. Escolha Dinheiro na retirada ou remova esses produtos da sacola.";
-    return;
-  }
   if (paying) return; paying = true;
   const btn = $("#oSubmit span"); btn.textContent = "Gerando pagamento…";
   try {

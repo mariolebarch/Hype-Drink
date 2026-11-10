@@ -5,17 +5,18 @@
 // InfiniteTag da Hype Drink (nome de usuário no app InfinitePay, sem o "$").
 // Pode ficar aqui ou na variável de ambiente INFINITEPAY_HANDLE do Netlify.
 const TAG = "jakeline-rodrigues-81y"; // InfiniteTag da conta da cliente (Conta Lojista CPF)
-// Produtos Herbalife ficam fora do pagamento online até a cliente confirmar os preços reais
-export const PRODS_ONLINE = false;
+// Produtos Herbalife no pagamento online (preços reais passados pela cliente em 10/11/2026)
+export const PRODS_ONLINE = true;
 export const HANDLE = (process.env.INFINITEPAY_HANDLE || TAG).replace(/^\$/, "").trim();
 
 export const FORMS = {cup: {nome: "Copo 1L", centavos: 3000}, bottle: {nome: "Garrafa 1L", centavos: 3000}};
 export const KITS = {k6: {n: 6, centavos: 16000}, k7: {n: 7, centavos: 18000}, k8: {n: 8, centavos: 20000}};
+// var: sabores (mesmo preço) ou tamanhos com preço próprio {tamanho: centavos}
 export const PRODS = {
-  cr7:     {nome: "CR7 Drive",          centavos: 24990, var: null},
-  liftoff: {nome: "LiftOff",            centavos: 14990, var: ["Limão", "Abacaxi", "Amora"]},
-  herbal:  {nome: "Herbal Concentrate", centavos: 13990, var: null},
-  nrg:     {nome: "N.R.G.",             centavos: 11990, var: null}
+  cr7:     {nome: "CR7 Drive",          centavos: 24300, var: null},
+  liftoff: {nome: "LiftOff",            centavos: 19600, var: ["Limão", "Abacaxi", "Amora"]},
+  herbal:  {nome: "Herbal Concentrate", centavos: null,  var: {"50 g": 22200, "102 g": 26400, "357 g": 107200}},
+  nrg:     {nome: "N.R.G.",             centavos: null,  var: {"60 g": 15900, "100 g": 25200, "330 g": 66800}}
 };
 export const SABORES = {
   limao: "Limão", amora: "Amora", abacaxi: "Abacaxi", morango: "Morango", uva: "Uva", maracuja: "Maracujá",
@@ -34,9 +35,11 @@ export function itemParaCobranca(it, delivery){
   if (it.form === "prod"){
     if (!PRODS_ONLINE) return null;
     const p = PRODS[it.pid]; if (!p) return null;
-    let desc = p.nome;
-    if (p.var){ if (!p.var.includes(it.v)) return null; desc += ` ${it.v}`; }
-    return {description: `${desc} (Herbalife)`, price: p.centavos, quantity: qty};
+    let desc = p.nome, price = p.centavos;
+    if (Array.isArray(p.var)){ if (!p.var.includes(it.v)) return null; desc += ` ${it.v}`; }
+    else if (p.var){ if (typeof it.v !== "string" || !Object.hasOwn(p.var, it.v)) return null; desc += ` ${it.v}`; price = p.var[it.v]; }
+    if (!Number.isInteger(price)) return null;
+    return {description: `${desc} (Herbalife)`, price, quantity: qty};
   }
 
   if (!BASES.includes(it.base)) return null;
