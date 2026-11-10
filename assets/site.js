@@ -260,7 +260,7 @@ function goStep(n){
   $("#bNext").textContent = builder.step === 0 ? "Começar" : builder.step >= STEPS.length ? "Pedir meus sachês →" : "Próximo passo →";
   $("#bPrev").style.display = builder.step === 0 ? "none" : "";
 }
-$("#bNext").addEventListener("click", () => { if (builder.step >= STEPS.length) { setForm("kit"); $("#monte-copo").scrollIntoView({behavior:"smooth"}); } else goStep(builder.step + 1); });
+$("#bNext").addEventListener("click", () => { if (builder.step >= STEPS.length) { setForm("kit"); rolarAte($("#monte-copo")); } else goStep(builder.step + 1); });
 $("#bPrev").addEventListener("click", () => goStep(builder.step - 1));
 $("#steps").addEventListener("click", e => { const li = e.target.closest(".step"); if (li) goStep(+li.dataset.i); });
 
@@ -371,7 +371,7 @@ $("#bag").addEventListener("click", e => {
     Object.assign(mc, {base:it.base, extras:[...it.extras], form:it.form, qty:it.qty, editing:it.id});
     if (it.form === "kit") Object.assign(mc, {kit:it.kit, pronto:it.pronto});
     renderMC(); $("#mcToast").hidden = true;
-    $("#monte-copo").scrollIntoView({behavior:"smooth"});
+    rolarAte($("#monte-copo"));
     return;
   }
   if (mc.editing && !bag.some(x => x.id === mc.editing)) { mc.editing = null; renderMC(); }
@@ -404,7 +404,7 @@ $("#mcAdd").addEventListener("click", () => {
   $("#mcToast span").textContent = msg;
 });
 $("#mcToast").addEventListener("click", e => {
-  if (e.target.closest("[data-t=again]")) { $("#mcToast").hidden = true; $("#monte-copo").scrollIntoView({behavior:"smooth"}); }
+  if (e.target.closest("[data-t=again]")) { $("#mcToast").hidden = true; rolarAte($("#monte-copo")); }
   if (e.target.closest("a")) $("#mcToast").hidden = true;
 });
 /* ===== Produtos Herbalife ===== */
@@ -504,7 +504,7 @@ $("#orderForm").addEventListener("submit", e => {
   e.preventDefault();
   const v = id => $(id).value.trim();
   const mode = tgVal("tgMode"), pay = tgVal("tgPay"), delivery = mode === "Delivery";
-  if (!bag.length){ oErr.textContent = "Sua sacola está vazia. Monte seu copo e adicione à sacola antes de enviar."; $("#bag").scrollIntoView({behavior:"smooth", block:"center"}); return; }
+  if (!bag.length){ oErr.textContent = "Sua sacola está vazia. Monte seu copo e adicione à sacola antes de enviar."; rolarAte($("#bag"), "center"); return; }
   if (!v("#oname")) return oInvalid($("#oname"), "Digite seu nome.");
   if (delivery){
     if (v("#aCep").replace(/\D/g, "").length !== 8) return oInvalid($("#aCep"), "Digite o CEP com 8 números.");
@@ -635,6 +635,44 @@ $("#sNext").addEventListener("click", () => {
     <span class="mono">Protocolo ${proto}</span><h3 class="display">Cadastro pronto, ${first}!</h3>
     <p>Abrimos o WhatsApp com os seus dados. É só tocar em enviar que a equipe Hype te chama pra explicar como funciona.</p>
     <a class="btn" href="${url}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg>Abrir WhatsApp de novo</a></div>`;
+});
+
+/* ===== Rolagem suave (igual no celular e no computador) ===== */
+// O scroll-behavior:smooth do CSS não anima em vários celulares (Safari antigo, modo economia de bateria,
+// "remover animações"). A animação é feita aqui, quadro a quadro; o alvo é recalculado a cada quadro.
+let rolagem = 0;
+function rolarAte(el, block = "start"){
+  if (!el) return;
+  const alvo = () => {
+    const r = el.getBoundingClientRect();
+    const y = scrollY + r.top - (block === "center" ? (innerHeight - r.height) / 2 : 0);
+    return Math.max(0, Math.min(y, document.documentElement.scrollHeight - innerHeight));
+  };
+  const ini = scrollY, dist0 = Math.abs(alvo() - ini);
+  if (dist0 < 2) return;
+  const dur = Math.min(1100, Math.max(450, dist0 * 0.22)) * (reduce ? 0.5 : 1);
+  const html = document.documentElement, t0 = performance.now(), id = ++rolagem;
+  html.style.scrollBehavior = "auto"; // evita o CSS brigar com a animação
+  const passo = t => {
+    if (id !== rolagem) return;
+    const p = Math.min(1, (t - t0) / dur), e = p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+    scrollTo(0, ini + (alvo() - ini) * e);
+    if (p < 1) requestAnimationFrame(passo); else html.style.scrollBehavior = "";
+  };
+  requestAnimationFrame(passo);
+}
+// se a pessoa tocar ou rolar no meio da animação, ela para
+const pararRolagem = () => { rolagem++; document.documentElement.style.scrollBehavior = ""; };
+["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, pararRolagem, {passive:true}));
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  const hash = a.getAttribute("href");
+  const el = hash.length > 1 && document.getElementById(decodeURIComponent(hash.slice(1)));
+  if (!el) return;
+  e.preventDefault();
+  if (location.hash !== hash) history.pushState(null, "", hash);
+  rolarAte(el);
 });
 
 /* ===== Interações gerais ===== */
