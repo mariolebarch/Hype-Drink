@@ -54,5 +54,54 @@ export function itemParaCobranca(it, delivery){
 }
 
 export const json = (status, body) => new Response(JSON.stringify(body), {
-  status, headers: {"content-type": "application/json; charset=utf-8", "cache-control": "no-store"}
+  status, headers: {"content-type": "application/json; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff"}
 });
+
+// Soma o valor (centavos) de uma lista de itens da sacola. Retorna null se algum item for inválido.
+export function cobrar(lista, delivery){
+  if (!Array.isArray(lista) || !lista.length || lista.length > 40) return null;
+  const items = [];
+  for (const it of lista){ const c = itemParaCobranca(it, !!delivery); if (!c) return null; items.push(c); }
+  return {items, total: items.reduce((s, i) => s + i.price * i.quantity, 0)};
+}
+
+// Campos que voltam da InfinitePay (número do pedido, transação, slug)
+export const campoOk = (v, max = 120) => typeof v === "string" && v.length > 0 && v.length <= max && /^[\w.\-]+$/.test(v);
+
+// Só aceita POST com corpo JSON (barra envio "às cegas" a partir de outros sites)
+export async function lerJson(req){
+  if (req.method !== "POST") return {erro: json(405, {erro: "Método não permitido"})};
+  if (!/^application\/json\b/i.test(req.headers.get("content-type") || "")) return {erro: json(415, {erro: "Envie os dados em JSON"})};
+  const txt = await req.text();
+  if (txt.length > 20000) return {erro: json(413, {erro: "Pedido grande demais"})};
+  try { const body = JSON.parse(txt); if (body && typeof body === "object") return {body}; } catch {}
+  return {erro: json(400, {erro: "Pedido inválido"})};
+}
+
+// Limite de chamadas por IP. Reforço do rateLimit do Netlify (config de cada função),
+// que é a proteção principal; este vale dentro de cada instância aquecida da função.
+const hits = new Map();
+export function excedeu(req, nome, limite, janelaMs = 60000){
+  const ip = req.headers.get("x-nf-client-connection-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "?";
+  const k = `${nome}|${ip}`, agora = Date.now();
+  const lista = (hits.get(k) || []).filter(t => agora - t < janelaMs);
+  lista.push(agora); hits.set(k, lista);
+  if (hits.size > 5000) hits.clear();
+  return lista.length > limite;
+}
+export const muitas = () => json(429, {erro: "Muitas tentativas seguidas. Aguarde um minuto."});
+
+// Consulta a InfinitePay. Também usada pela conferência da equipe (functions/conferir.mjs).
+export async function consultar(b){
+  const r = await fetch("https://api.checkout.infinitepay.io/payment_check", {
+    method: "POST",
+    headers: {"content-type": "application/json", accept: "application/json"},
+    body: JSON.stringify({handle: HANDLE, order_nsu: b.order_nsu, transaction_nsu: b.transaction_nsu, slug: b.slug})
+  });
+  const d = await r.json().catch(() => ({}));
+  return {
+    pago: d.success === true && d.paid === true,
+    valor: typeof d.amount === "number" ? d.amount : null,
+    metodo: d.capture_method === "pix" ? "Pix" : d.capture_method === "credit_card" ? "Cartão de crédito" : null
+  };
+}
