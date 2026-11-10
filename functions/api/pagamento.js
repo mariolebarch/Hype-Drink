@@ -1,13 +1,7 @@
 // POST /api/pagamento  → confirma na InfinitePay se o pedido foi pago (usado na página obrigado.html).
-// versão do catálogo: 2026-11-10 (mudar esta linha quando alterar netlify/lib/catalogo.mjs, para o Netlify reempacotar a função)
-import {HANDLE, campoOk, consultar, json, lerJson, excedeu, muitas} from "../lib/catalogo.mjs";
+import {HANDLE, campoOk, consultar, json, lerJson, excedeu, muitas} from "../../lib/catalogo.js";
 
-export const config = {
-  path: "/api/pagamento",
-  rateLimit: {windowLimit: 30, windowSize: 60, aggregateBy: ["ip", "domain"]}
-};
-
-export default async (req) => {
+async function handler(req){
   if (excedeu(req, "pagamento", 30)) return muitas();
   const {body: b, erro} = await lerJson(req); if (erro) return erro;
   if (!HANDLE) return json(503, {erro: "Pagamento online ainda não configurado"});
@@ -19,4 +13,7 @@ export default async (req) => {
     console.error("InfinitePay /payment_check falhou", e);
     return json(502, {erro: "Não foi possível confirmar agora"});
   }
-};
+}
+
+// Cloudflare Pages Functions: este arquivo responde em /api/pagamento
+export const onRequest = ({request}) => handler(request);

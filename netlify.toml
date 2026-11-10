@@ -1,43 +1,10 @@
-# Configuração do Netlify (o site é publicado como está, sem etapa de build).
-
-# Arquivos internos do projeto não são páginas do site.
-[[redirects]]
-  from = "/netlify/*"
-  to = "/404.html"
-  status = 404
-  force = true
+# O site saiu do Netlify e agora fica no Cloudflare Pages (https://hypefitdrink.pages.dev).
+# Se o Netlify voltar a publicar, o endereço antigo passa a levar para o novo (links antigos e Google).
+[build]
+  publish = "public"
 
 [[redirects]]
-  from = "/netlify.toml"
-  to = "/404.html"
-  status = 404
+  from = "/*"
+  to = "https://hypefitdrink.pages.dev/:splat"
+  status = 301
   force = true
-
-[[redirects]]
-  from = "/README.md"
-  to = "/404.html"
-  status = 404
-  force = true
-
-# Cabeçalhos de segurança em todas as páginas.
-# Se o site passar a carregar algo de outro domínio (pixel, mapa, vídeo), libere o domínio aqui na CSP.
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://viacep.com.br; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
-
-# Páginas com dados do pagamento na URL: não repassar a URL para outros sites.
-[[headers]]
-  for = "/obrigado.html"
-  [headers.values]
-    Referrer-Policy = "no-referrer"
-
-[[headers]]
-  for = "/conferir.html"
-  [headers.values]
-    Referrer-Policy = "no-referrer"
-    X-Robots-Tag = "noindex"

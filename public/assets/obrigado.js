@@ -23,7 +23,7 @@ function confLink(){
     const bin = String.fromCharCode(...new TextEncoder().encode(JSON.stringify(it)));
     const i = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     const q = new URLSearchParams({o:P.order_nsu, t:P.transaction_nsu, s:P.slug, d:pend.delivery ? "1" : "0", i});
-    return `${location.origin}/conferir.html?${q}`;
+    return `${location.origin}/conferir?${q}`;
   } catch (e) { return ""; }
 }
 

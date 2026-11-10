@@ -1,13 +1,7 @@
 // POST /api/checkout  → cria o link de pagamento da InfinitePay (Pix ou cartão) para a sacola.
-// versão do catálogo: 2026-11-10 (mudar esta linha quando alterar netlify/lib/catalogo.mjs, para o Netlify reempacotar a função)
-import {HANDLE, cobrar, json, lerJson, excedeu, muitas} from "../lib/catalogo.mjs";
+import {HANDLE, cobrar, json, lerJson, excedeu, muitas} from "../../lib/catalogo.js";
 
-export const config = {
-  path: "/api/checkout",
-  rateLimit: {windowLimit: 10, windowSize: 60, aggregateBy: ["ip", "domain"]}
-};
-
-export default async (req) => {
+async function handler(req){
   if (excedeu(req, "checkout", 10)) return muitas();
   const {body, erro} = await lerJson(req); if (erro) return erro;
   if (!HANDLE) return json(503, {erro: "Pagamento online ainda não configurado"});
@@ -26,7 +20,7 @@ export default async (req) => {
     handle: HANDLE,
     items,
     order_nsu: nsu,
-    redirect_url: `${origin}/obrigado.html`
+    redirect_url: `${origin}/obrigado`
   };
   const nome = typeof body.nome === "string" ? body.nome.replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 80) : "";
   if (nome) payload.customer = {name: nome};
@@ -49,4 +43,7 @@ export default async (req) => {
     console.error("InfinitePay /links falhou", e);
     return json(502, {erro: "Não foi possível falar com a InfinitePay"});
   }
-};
+}
+
+// Cloudflare Pages Functions: este arquivo responde em /api/checkout
+export const onRequest = ({request}) => handler(request);

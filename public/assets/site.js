@@ -1,6 +1,6 @@
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
-const PAGAMENTO_ONLINE = true;       // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em netlify/lib/catalogo.mjs
+const PAGAMENTO_ONLINE = true;       // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em lib/catalogo.js
 const FORMS = {
   cup:    {nome:"Copo 1L",       preco:30.00},
   bottle: {nome:"Garrafa 1L",    preco:30.00},
@@ -14,7 +14,7 @@ const KITS = [
 ];
 // Produtos Herbalife vendidos avulsos (preços passados pela cliente em 10/11/2026).
 // "var" = opções do produto: lista de sabores (mesmo preço) ou de tamanhos com preço próprio {v, preco}.
-// Ao mudar preços aqui, mude também em netlify/lib/catalogo.mjs (é o valor que o servidor cobra).
+// Ao mudar preços aqui, mude também em lib/catalogo.js (é o valor que o servidor cobra).
 const PRODS = [
   {id:"cr7",    nome:"CR7 Drive",          det:"Pote 810 g · eletrólitos, carboidratos e vitaminas", img:"assets/prod-cr7.webp",            preco:243.00},
   {id:"liftoff",nome:"LiftOff",            det:"Caixa com 15 sachês · cafeína, taurina e vitaminas",  img:"assets/prod-liftoff-limao.webp",   preco:196.00, varNome:"Sabor", var:["Limão","Abacaxi","Amora"], escolher:true,
