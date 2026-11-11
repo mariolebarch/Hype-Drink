@@ -1,6 +1,7 @@
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
 const PAGAMENTO_ONLINE = true;       // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em lib/catalogo.js
+const MAX_EXTRAS = 2;                 // máximo de adicionais (sabores/frutas) por drink
 const FORMS = {
   cup:    {nome:"Copo 1L",       preco:30.00},
   bottle: {nome:"Garrafa 1L",    preco:30.00},
@@ -186,7 +187,9 @@ $("#mcBases").addEventListener("click", e => { const b = e.target.closest("[data
 $("#mcExtras").addEventListener("click", e => {
   const x = e.target.closest("[data-x]"); if (!x) return;
   const id = x.dataset.x;
-  mc.extras = mc.extras.includes(id) ? mc.extras.filter(v => v !== id) : [...mc.extras, id];
+  if (mc.extras.includes(id)) mc.extras = mc.extras.filter(v => v !== id);
+  else if (mc.extras.length < MAX_EXTRAS) mc.extras = [...mc.extras, id];
+  else return; // já tem o máximo: os outros ficam bloqueados
   renderMC();
 });
 function setBase(id){ mc.base = id; mc.extras = mc.extras.filter(x => x !== id); renderMC(); }
@@ -209,8 +212,20 @@ function renderMC(){
   $$("button[data-form]").forEach(x => x.setAttribute("aria-pressed", x.dataset.form === vf));
   $$("[data-b]").forEach(x => x.setAttribute("aria-pressed", x.dataset.b === mc.base));
   $$("#mcForm [data-v]").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === mc.form));
-  $("#mcExtras").innerHTML = EXTRAS.filter(x => x.id !== mc.base).map(x =>
-    `<button type="button" class="xchip" data-x="${x.id}" style="--c:${x.c}" aria-pressed="${mc.extras.includes(x.id)}"><i></i>${x.nome}</button>`).join("");
+  const cheio = mc.extras.length >= MAX_EXTRAS;
+  $("#mcExtras").innerHTML = EXTRAS.filter(x => x.id !== mc.base).map(x => {
+    const on = mc.extras.includes(x.id);
+    return `<button type="button" class="xchip" data-x="${x.id}" style="--c:${x.c}" aria-pressed="${on}"${cheio && !on ? " disabled" : ""}><i></i>${x.nome}</button>`;
+  }).join("");
+  $("#mcXmsg").textContent = cheio ? `${MAX_EXTRAS} adicionais escolhidos (o máximo). Para trocar, desmarque um deles.`
+    : `Escolha até ${MAX_EXTRAS} adicionais · ${mc.extras.length} de ${MAX_EXTRAS}`;
+  $("#mcXmsg").classList.toggle("cheio", cheio);
+  // 2) delivery: copo vai como garrafa
+  const delivSel = ($("#tgMode [aria-pressed=true]") || {dataset:{}}).dataset.v !== "Retirada";
+  const copoNoDeliv = delivSel && mc.form === "cup";
+  $("#mcHint").textContent = copoNoDeliv ? "Você está em delivery: este copo vai como garrafa de 1L, pelo mesmo preço."
+    : "Delivery sai na garrafa. Na retirada você escolhe copo ou garrafa.";
+  $("#mcHint").classList.toggle("alerta", copoNoDeliv);
   const name = compName(mc.base, mc.extras), isKit = mc.form === "kit", K = kitOf(mc.kit);
   $("#flavName").textContent = name;
   $("#mcKit").hidden = !isKit;
@@ -320,7 +335,8 @@ try {
     if (typeof it.id !== "string" || !/^[a-z0-9]{1,20}$/i.test(it.id)) it.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     if (it.form === "prod"){ const P = prodOf(it.pid), ops = varNomes(P); if (!(ops && ops.includes(it.v))) it.v = ops ? ops[0] : undefined; return; }
     if (it.form === "kit"){ it.kit = kitOf(it.kit).id; if (typeof it.pronto !== "boolean") it.pronto = true; }
-    it.extras = Array.isArray(it.extras) ? [...new Set(it.extras)].filter(x => x !== it.base && extraOf(x)) : [];
+    it.extras = Array.isArray(it.extras) ? [...new Set(it.extras)].filter(x => x !== it.base && extraOf(x)).slice(0, MAX_EXTRAS) : [];
+    if (!(it.form === "bottle" && Number.isInteger(it.copos) && it.copos > 0 && it.copos <= it.qty)) delete it.copos;
   });
 } catch (e) { bag = []; }
 const saveBag = () => { try { localStorage.setItem(BAG_KEY, JSON.stringify(bag)); } catch (e) {} };
@@ -349,19 +365,46 @@ function bagTotals(){
   bag.forEach(it => { n += it.qty; sum += priceOf(it) * it.qty; });
   return {sum, n, txt: fmt(sum)};
 }
+// Delivery: tudo vai na garrafa. Os copos da sacola viram garrafas ("copos" guarda quantos eram copo)
+// e voltam a ser copo se a pessoa escolher retirar, para não precisar montar o pedido de novo.
+function juntarIguais(){
+  const vistos = new Map();
+  bag = bag.filter(it => {
+    const k = keyOf(it), t = vistos.get(k);
+    if (!t){ vistos.set(k, it); return true; }
+    t.qty = Math.min(30, t.qty + it.qty);
+    if (it.copos) t.copos = Math.min(t.qty, (t.copos || 0) + it.copos);
+    return false;
+  });
+}
+function ajustarFormato(){
+  let mudou = false;
+  if (isDeliv()){
+    bag.forEach(it => { if (it.form === "cup"){ it.form = "bottle"; it.copos = it.qty; mudou = true; } });
+  } else {
+    bag.slice().forEach(it => {
+      if (it.form !== "bottle" || !it.copos) return;
+      const c = Math.min(it.copos, it.qty); delete it.copos; mudou = true;
+      if (c >= it.qty) it.form = "cup";
+      else { it.qty -= c; bag.push({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), form:"cup", base:it.base, extras:[...it.extras], qty:c}); }
+    });
+  }
+  if (mudou){ juntarIguais(); saveBag(); }
+}
 function renderBag(){
+  ajustarFormato();
   const T = bagTotals(), deliv = isDeliv();
-  $("#bag").innerHTML = bag.length ? bag.map(it => {
+  const viraram = deliv ? bag.reduce((s, it) => s + (it.form === "bottle" && it.copos ? it.copos : 0), 0) : 0;
+  $("#bag").innerHTML = (viraram ? `<div class="bagconv">🛵 Delivery: ${viraram} ${viraram > 1 ? "copos foram" : "copo foi"} para a garrafa de 1L, pelo mesmo preço. Se escolher <b>Retirar</b>, ${viraram > 1 ? "voltam" : "volta"} a ser copo.</div>` : "") + (bag.length ? bag.map(it => {
     const sw = it.form === "prod" ? `<img class="sw ph" src="${prodImg(prodOf(it.pid), it.v)}" alt="" width="28" height="35">`
       : `<i class="sw" style="background:${gradCss(stopsFor(it.base, it.extras))}"></i>`;
-    const swapped = deliv && it.form === "cup";
     return `<div class="bitem" data-id="${it.id}">
       ${sw}
-      <div class="bi"><b>${itemTitle(it, swapped)}</b><span>${itemDesc(it)}</span>${swapped ? `<span class="swp">Pediu copo: no delivery vai na garrafa</span>` : ""}
+      <div class="bi"><b>${itemTitle(it)}</b><span>${itemDesc(it)}</span>${it.copos ? `<span class="swp">Era copo: no delivery vai na garrafa</span>` : ""}
         <div class="bia">${it.form === "prod" ? "" : `<button type="button" data-act="edit">Editar</button>`}<button type="button" data-act="rm">Remover</button></div></div>
       <div class="bq"><button type="button" data-act="dec" aria-label="Diminuir">−</button><output>${it.qty}</output><button type="button" data-act="inc" aria-label="Aumentar">+</button></div>
       <b class="bp">${fmt(priceOf(it) * it.qty)}</b></div>`;
-  }).join("") : `<div class="bagempty">Sua sacola está vazia. <a href="#monte-copo">Monte seu primeiro copo</a></div>`;
+  }).join("") : `<div class="bagempty">Sua sacola está vazia. <a href="#monte-copo">Monte seu primeiro copo</a></div>`);
   $("#total").textContent = T.txt;
   $("#bagCount").textContent = T.n;
   $("#mLabel").textContent = T.n ? `Sacola · ${T.n} ${T.n > 1 ? "itens" : "item"}` : "1 litro a partir de";
@@ -491,9 +534,11 @@ const pressTg = (id, val) => $$(`#${id} button`).forEach(x => x.setAttribute("ar
 const isOnlinePay = v => PAGAMENTO_ONLINE && v !== "Dinheiro";
 function onMode(v){
   $("#addrBox").hidden = v !== "Delivery";
-  $("#modeNote").textContent = v === "Delivery" ? "No delivery os drinks vão na garrafa de 1L." : "Na retirada você leva no copo ou na garrafa, como montou.";
+  $("#modeNote").textContent = v === "Delivery" ? "No delivery tudo vai na garrafa de 1L: copos da sacola viram garrafa, pelo mesmo preço."
+    : "Na retirada você leva no copo ou na garrafa, como montou.";
+  $("#taxaNote").hidden = $("#totEntrega").hidden = v !== "Delivery";
   if (v === "Delivery" && tgVal("tgPay") === "Dinheiro"){ pressTg("tgPay", "Pix"); onPay("Pix"); }
-  renderBag();
+  renderBag(); renderMC();
 }
 toggleGroup("tgMode", onMode);
 const PAY_NOTES = PAGAMENTO_ONLINE
@@ -572,6 +617,7 @@ $("#orderForm").addEventListener("submit", e => {
       `Bairro: ${v("#aBairro")}`,
       `${v("#aCid")} · CEP ${v("#aCep")}`);
     if (v("#aRef")) L.push(`Referência: ${v("#aRef")}`);
+    L.push(`🛵 *Taxa de entrega:* a combinar com a Hype pelo WhatsApp (não está no total${isOnlinePay(pay) ? " nem no pagamento online" : ""})`);
   } else {
     L.push("*🏪 Retirada no local*");
   }

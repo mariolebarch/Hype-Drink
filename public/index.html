@@ -489,6 +489,12 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .xchip i{width:14px;height:14px;border-radius:50%;background:var(--c)}
 .xchip[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 20%,transparent)}
 .xchip[aria-pressed=true]::after{content:"✓";font-size:12px}
+.xchip:disabled{opacity:.32;cursor:not-allowed;filter:grayscale(.6)}
+.xmsg.cheio,.fhint.alerta{color:var(--p3);font-weight:700}
+.taxa{display:flex;flex-direction:column;gap:4px;margin:2px 0 18px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--p);background:rgba(168,85,247,.14)}
+.taxa b{font-size:15px;color:#fff}.taxa span{font-size:13.5px;line-height:1.45;color:var(--text)}.taxa strong{color:#fff}
+.bagconv{font-size:13px;line-height:1.4;padding:10px 12px;margin-bottom:8px;border-radius:12px;border:1px solid var(--p);background:rgba(168,85,247,.12)}
+.obar .tot small{display:block;margin-top:4px;font-size:12px;font-weight:700;color:var(--p3)}
 .frow3{display:grid;grid-template-columns:1.6fr 1fr;gap:12px}
 /* produtos herbalife */
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
@@ -768,7 +774,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       </div>
       <div class="mcctrl rv">
         <div class="mcstep"><span class="lb"><b>01</b> · Escolha a base</span><div class="bases" id="mcBases" role="group" aria-label="Base"></div></div>
-        <div class="mcstep"><span class="lb"><b>02</b> · Combine com sabores e frutas <small>opcional, escolha quantos quiser</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Sabores e frutas"></div></div>
+        <div class="mcstep"><span class="lb"><b>02</b> · Combine com sabores e frutas <small>opcional, até 2</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Sabores e frutas (até 2)"></div><p class="fhint xmsg" id="mcXmsg" aria-live="polite"></p></div>
         <div class="mcstep frow3">
           <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="true">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="false">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div>
             <p class="fhint" id="mcHint">Delivery sai na garrafa. Na retirada você escolhe copo ou garrafa.</p></div>
@@ -821,13 +827,14 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="frow">
         <div class="field"><span class="lb">Receber</span>
           <div class="tg" id="tgMode"><button type="button" data-v="Delivery" aria-pressed="true">Delivery</button><button type="button" data-v="Retirada" aria-pressed="false">Retirar</button></div>
-          <p class="fhint" id="modeNote">No delivery os drinks vão na garrafa de 1L.</p>
+          <p class="fhint" id="modeNote">No delivery tudo vai na garrafa de 1L: copos da sacola viram garrafa, pelo mesmo preço.</p>
         </div>
         <div class="field"><span class="lb">Pagamento</span>
           <div class="tg" id="tgPay"><button type="button" data-v="Pix" aria-pressed="true">Pix</button><button type="button" data-v="Cartão" aria-pressed="false">Cartão</button><button type="button" data-v="Dinheiro" aria-pressed="false">Dinheiro</button></div>
           <p class="fhint" id="payNote">Você paga na entrega ou na retirada.</p>
         </div>
       </div>
+      <p class="taxa" id="taxaNote" role="note"><b>🛵 Taxa de entrega à parte</b><span>O valor da entrega (motoboy) é <strong>combinado com a Hype Drink pelo WhatsApp</strong>, depois do pedido. Ele não está incluído no total nem no pagamento online.</span></p>
       <fieldset class="addr" id="addrBox">
         <legend class="lb">Endereço de entrega</legend>
         <div class="agrid">
@@ -848,7 +855,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       </div>
       <p class="err" id="oErr" role="alert"></p>
       <div class="obar">
-        <div class="tot"><span>Total</span><b id="total">R$ 0,00</b></div>
+        <div class="tot"><span>Total</span><b id="total">R$ 0,00</b><small id="totEntrega">+ entrega a combinar no WhatsApp</small></div>
         <button class="btn" type="submit" id="oSubmit"><svg viewBox="0 0 24 24"><use href="#i-wa"/></svg><span>Enviar pedido</span></button>
       </div>
       <p class="note" id="oNote">A mensagem abre pronta no WhatsApp da Hype e você confirma tudo na conversa antes de pagar. Seus dados são usados só para preparar e entregar o pedido. Veja a <a href="privacidade.html">Política de Privacidade</a>.</p>
@@ -956,7 +963,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
     <div class="head rv"><div><p class="eyebrow">FAQ</p><h2 class="display">Dúvidas<br><span class="pp">rápidas</span></h2></div></div>
     <div class="faq rv">
       <details open><summary>Qual o tamanho do Hype?</summary><p>Sempre 1 litro, tanto no copo quanto na garrafa, por R$ 30,00. É pra ir tomando aos poucos ao longo do dia.</p></details>
-      <details><summary>Copo ou garrafa: como escolho?</summary><p>No delivery o Hype vai sempre na garrafa de 1 litro. Se for retirar, você escolhe copo ou garrafa, pelo mesmo valor.</p></details>
+      <details><summary>Copo ou garrafa: como escolho?</summary><p>No delivery o Hype vai sempre na garrafa de 1 litro: se você montou copo, ele vai como garrafa, pelo mesmo valor. Se for retirar, você escolhe copo ou garrafa.</p></details>
+      <details><summary>Quanto custa a entrega?</summary><p>O valor da entrega (motoboy) depende do seu endereço e é combinado com a Hype Drink pelo WhatsApp, depois do pedido. Ele não entra no total do site nem no pagamento online.</p></details>
       <details><summary>O Hype é só pra quem treina?</summary><p>Não. O Hype é pra todo tipo de público: quem trabalha, estuda, dirige, cuida da casa ou treina. É pra qualquer pessoa que queira mais energia e disposição no dia.</p></details>
       <details><summary>O Hype emagrece?</summary><p>Não. O Hype não é um produto para emagrecer. Ele tem ação diurética, que ajuda a desinchar e a eliminar a retenção de líquido, além de dar energia e disposição.</p></details>
       <details><summary>Tem açúcar?</summary><p>Não. O Hype Drink é zero açúcar e baixa caloria. O sabor vem do cardamomo e do saborizante.</p></details>
