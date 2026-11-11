@@ -1,7 +1,7 @@
 /* ===== Configuração (dados do cliente) ===== */
 const WHATSAPP = "5531989691851";         // número que recebe pedidos e cadastros
 const PAGAMENTO_ONLINE = true;       // true = mostra "Online" (InfinitePay) no pedido; precisa da InfiniteTag em lib/catalogo.js
-const MAX_EXTRAS = 2;                 // máximo de adicionais (sabores/frutas) por drink
+const MAX_EXTRAS = 1;                 // só 1 saborizante por drink (os outros ficam bloqueados)
 const FORMS = {
   cup:    {nome:"Copo 1L",       preco:30.00},
   bottle: {nome:"Garrafa 1L",    preco:30.00},
@@ -36,7 +36,7 @@ const BASES = [
   {id:"amora",   nome:"Amora",   c:"#8e2a8c"},
   {id:"abacaxi", nome:"Abacaxi", c:"#ffcb3d"}
 ];
-// Sabores e frutas que combinam com qualquer base (a própria base não aparece como opção)
+// Saborizantes que combinam com qualquer base (a própria base não aparece como opção). Só 1 por drink.
 const EXTRAS = [
   {id:"morango",    nome:"Morango",       c:"#ff3b5c"},
   {id:"uva",        nome:"Uva",           c:"#7a3db8"},
@@ -217,8 +217,8 @@ function renderMC(){
     const on = mc.extras.includes(x.id);
     return `<button type="button" class="xchip" data-x="${x.id}" style="--c:${x.c}" aria-pressed="${on}"${cheio && !on ? " disabled" : ""}><i></i>${x.nome}</button>`;
   }).join("");
-  $("#mcXmsg").textContent = cheio ? `${MAX_EXTRAS} adicionais escolhidos (o máximo). Para trocar, desmarque um deles.`
-    : `Escolha até ${MAX_EXTRAS} adicionais · ${mc.extras.length} de ${MAX_EXTRAS}`;
+  $("#mcXmsg").textContent = cheio ? `Saborizante escolhido: ${extraOf(mc.extras[0]).nome}. Só dá para escolher 1: para trocar, desmarque e escolha outro.`
+    : "Escolha 1 saborizante (opcional).";
   $("#mcXmsg").classList.toggle("cheio", cheio);
   // 2) delivery: copo vai como garrafa
   const delivSel = ($("#tgMode [aria-pressed=true]") || {dataset:{}}).dataset.v !== "Retirada";

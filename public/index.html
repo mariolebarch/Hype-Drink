@@ -491,6 +491,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .xchip[aria-pressed=true]::after{content:"✓";font-size:12px}
 .xchip:disabled{opacity:.32;cursor:not-allowed;filter:grayscale(.6)}
 .xmsg.cheio,.fhint.alerta{color:var(--p3);font-weight:700}
+.mc .lb .sabz{font-style:normal;font-weight:700;color:var(--p3)}
+.mc .lb .so1{display:inline-block;margin:0 4px;padding:2px 8px;border-radius:999px;background:var(--p);color:#fff;font-weight:700;letter-spacing:.04em;vertical-align:1px}
 .taxa{display:flex;flex-direction:column;gap:4px;margin:2px 0 18px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--p);background:rgba(168,85,247,.14)}
 .taxa b{font-size:15px;color:#fff}.taxa span{font-size:13.5px;line-height:1.45;color:var(--text)}.taxa strong{color:#fff}
 .bagconv{font-size:13px;line-height:1.4;padding:10px 12px;margin-bottom:8px;border-radius:12px;border:1px solid var(--p);background:rgba(168,85,247,.12)}
@@ -765,7 +767,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
   <div class="wrap">
     <div class="head rv">
       <div><p class="eyebrow">Monte seu próprio copo</p><h2 class="display">Do seu jeito,<br><span class="pp">no seu sabor</span></h2></div>
-      <p>Escolha uma das três bases, combine com os sabores e frutas que quiser e veja o seu Hype ganhar cor. Monte quantos copos quiser: cada um vai separado pra sacola.</p>
+      <p>Escolha uma das três bases, combine com um saborizante e veja o seu Hype ganhar cor. Monte quantos copos quiser: cada um vai separado pra sacola.</p>
     </div>
     <div class="mcgrid">
       <div class="mcstage rv">
@@ -774,7 +776,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       </div>
       <div class="mcctrl rv">
         <div class="mcstep"><span class="lb"><b>01</b> · Escolha a base</span><div class="bases" id="mcBases" role="group" aria-label="Base"></div></div>
-        <div class="mcstep"><span class="lb"><b>02</b> · Combine com sabores e frutas <small>opcional, até 2</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Sabores e frutas (até 2)"></div><p class="fhint xmsg" id="mcXmsg" aria-live="polite"></p></div>
+        <div class="mcstep"><span class="lb"><b>02</b> · Combine com um <em class="sabz">saborizante</em> <span class="so1">só 1</span> <small>opcional</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Saborizante (escolha só 1)"></div><p class="fhint xmsg" id="mcXmsg" aria-live="polite"></p></div>
         <div class="mcstep frow3">
           <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="true">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="false">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div>
             <p class="fhint" id="mcHint">Delivery sai na garrafa. Na retirada você escolhe copo ou garrafa.</p></div>
@@ -970,7 +972,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <details><summary>Tem açúcar?</summary><p>Não. O Hype Drink é zero açúcar e baixa caloria. O sabor vem do cardamomo e do saborizante.</p></details>
       <details><summary>Posso preparar em casa?</summary><p>Pode. A Hype vende kits promocionais de sachês: 6 sachês por R$ 160, 7 por R$ 180 e 8 por R$ 200. Todo kit vem com 1 garrafa, 1 copo e canudos, e você pode pedir 1 drink pronto junto. Pra preparar: em um copo de 1 litro, coloque 300 ml de água gelada, os ingredientes, misture, encha de gelo e complete com água gelada e saborizante a gosto.</p></details>
       <details><summary>Qual o melhor horário pra tomar?</summary><p>De manhã ou à tarde. Como tem cafeína, o ideal é evitar à noite para não atrapalhar o sono.</p></details>
-      <details><summary>Quais sabores posso escolher?</summary><p>São três bases: Limão, Amora e Abacaxi. Cada uma pode ser combinada com Morango, Uva, Maracujá, Jabuticaba, Tangerina, Pink Lemonade e as outras bases. Monte o seu em "Monte seu copo".</p></details>
+      <details><summary>Quais sabores posso escolher?</summary><p>São três bases: Limão, Amora e Abacaxi. Cada uma pode ser combinada com um saborizante: Morango, Uva, Maracujá, Jabuticaba, Tangerina, Pink Lemonade ou as outras bases. Monte o seu em "Monte seu copo".</p></details>
       <details><summary>Como funciona o Trabalhe Conosco?</summary><p>Você faz o cadastro aqui no site e a equipe Hype te chama no WhatsApp para explicar como funciona a revenda, os produtos e as condições. Os ganhos dependem das suas vendas.</p></details>
       <details><summary>Quem não deve tomar?</summary><p>Gestantes, lactantes, crianças e pessoas sensíveis à cafeína ou com alguma condição de saúde devem consultar um profissional antes de consumir.</p></details>
     </div>
