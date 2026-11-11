@@ -545,11 +545,16 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
 .mcbar b{display:block;font-size:18px;font-weight:800;max-width:38ch;line-height:1.3}
 .mcbar small{font-family:var(--mono);font-size:13px;color:var(--p3)}
 .mcacts{display:flex;gap:8px;flex-wrap:wrap}
+.mcrecv{min-width:200px}.mcrecv .lb{margin-bottom:6px}.mcrecv .tg button{padding:9px 14px}
+.aviso-red{color:#ff5c7a;font-weight:700}
+.tg button.bloq,.seg button.bloq{opacity:.45}
+.recv{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:15px}.recv b{color:#fff}
+.linkbtn{color:var(--p3);font-weight:700;font-size:13px;text-decoration:underline;text-underline-offset:3px}
 .toast{margin-top:14px;padding:14px 16px;border-radius:14px;background:rgba(168,85,247,.14);border:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;animation:sw .4s}
 .toast[hidden]{display:none}
 .toast div{display:flex;gap:8px;flex-wrap:wrap}
 @media (max-width:900px){.mcgrid{grid-template-columns:1fr}.mcstage .vessel{width:min(62%,240px)}}
-@media (max-width:560px){.base{flex-direction:column;text-align:center;gap:6px;padding:10px 6px}.base i{width:30px;height:40px}.base b{font-size:14px}.frow3{grid-template-columns:1fr}.mcacts,.mcacts .btn{width:100%}}
+@media (max-width:560px){.base{flex-direction:column;text-align:center;gap:6px;padding:10px 6px}.base i{width:30px;height:40px}.base b{font-size:14px}.frow3{grid-template-columns:1fr}.mcacts,.mcacts .btn,.mcrecv{width:100%}}
 
 /* sacola */
 .bag{display:flex;flex-direction:column;gap:8px}
@@ -658,9 +663,10 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       <div class="vwrap" id="vwrap"><div id="heroVessel"></div></div>
       <div class="ctrl">
         <div class="seg" role="group" aria-label="Formato">
-          <button type="button" data-form="cup" aria-pressed="true">Copo 1L</button>
-          <button type="button" data-form="bottle" aria-pressed="false">Garrafa 1L</button>
+          <button type="button" data-form="cup" aria-pressed="false">Copo 1L</button>
+          <button type="button" data-form="bottle" aria-pressed="true">Garrafa 1L</button>
         </div>
+        <p class="fhint aviso-red" id="heroAviso" role="alert" hidden></p>
         <div class="bchips" role="group" aria-label="Base do sabor" id="heroBases"></div>
         <p class="flavname">Seu Hype: <b id="flavName">Limão</b><a href="#monte-copo">Personalizar →</a></p>
       </div>
@@ -777,8 +783,8 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
         <div class="mcstep"><span class="lb"><b>01</b> · Escolha a base</span><div class="bases" id="mcBases" role="group" aria-label="Base"></div></div>
         <div class="mcstep"><span class="lb"><b>02</b> · Combine com <span class="so1">apenas um saborizante</span> <small>opcional</small></span><div class="xchips" id="mcExtras" role="group" aria-label="Saborizante (apenas um)"></div><p class="fhint xmsg" id="mcXmsg" aria-live="polite"></p></div>
         <div class="mcstep frow3">
-          <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="true">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="false">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div>
-            <p class="fhint" id="mcHint">Delivery sai na garrafa. Na retirada você escolhe copo ou garrafa.</p></div>
+          <div><span class="lb"><b>03</b> · Formato</span><div class="tg" id="mcForm"><button type="button" data-v="cup" aria-pressed="false">Copo 1L</button><button type="button" data-v="bottle" aria-pressed="true">Garrafa 1L</button><button type="button" data-v="kit" aria-pressed="false">Kit sachês</button></div>
+            <p class="fhint aviso-red" id="mcHint" role="alert" hidden></p></div>
           <div><span class="lb">Quantidade</span><div class="qty"><button type="button" id="mcMinus" aria-label="Diminuir">−</button><output id="mcQ">1</output><button type="button" id="mcPlus" aria-label="Aumentar">+</button></div></div>
         </div>
         <div class="mcstep mckit" id="mcKit" hidden>
@@ -788,6 +794,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
         </div>
         <div class="mcbar">
           <div><span class="lb" id="mcMode">Seu Hype</span><b id="mcSummary"></b><small id="mcPrice"></small></div>
+          <div class="mcrecv"><span class="lb">Receber</span><div class="tg" id="tgMode"><button type="button" data-v="Delivery" aria-pressed="true">Delivery</button><button type="button" data-v="Retirada" aria-pressed="false">Retirar</button></div></div>
           <div class="mcacts"><button type="button" class="btn ghost" id="mcCancel" hidden>Cancelar</button><button type="button" class="btn" id="mcAdd"><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg><span>Adicionar à sacola</span></button></div>
         </div>
         <div class="toast" id="mcToast" role="status" hidden></div>
@@ -827,7 +834,7 @@ footer .legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:22px
       </div>
       <div class="frow">
         <div class="field"><span class="lb">Receber</span>
-          <div class="tg" id="tgMode"><button type="button" data-v="Delivery" aria-pressed="true">Delivery</button><button type="button" data-v="Retirada" aria-pressed="false">Retirar</button></div>
+          <p class="recv"><b id="recvTxt">Delivery</b><button type="button" class="linkbtn" id="recvTroca">Trocar para Retirar</button></p>
           <p class="fhint" id="modeNote">No delivery tudo vai na garrafa de 1L: copos da sacola viram garrafa, pelo mesmo preço.</p>
         </div>
         <div class="field"><span class="lb">Pagamento</span>

@@ -173,7 +173,7 @@ const gradCss = st => `linear-gradient(180deg,${st[0]} 0%,${st[1]} 28%,${st[2]} 
 const compName = (base, extras) => [baseOf(base).nome, ...extras.map(id => extraOf(id).nome)].join(" + ");
 
 // estado do copo que está sendo montado
-const mc = {base:"limao", extras:[], form:"cup", qty:1, kit:"k6", pronto:true, editing:null};
+const mc = {base:"limao", extras:[], form:"bottle", qty:1, kit:"k6", pronto:true, editing:null};
 const kitOf = id => KITS.find(k => k.id === id) || KITS[0];
 const prodOf = id => PRODS.find(p => p.id === id);
 $("#mcKits").innerHTML = KITS.map(k => `<button type="button" class="kitopt" data-k="${k.id}" aria-pressed="false"><b>${k.n}</b><span>sachês</span><em>${fmt(k.preco)}</em></button>`).join("");
@@ -193,11 +193,25 @@ $("#mcExtras").addEventListener("click", e => {
   renderMC();
 });
 function setBase(id){ mc.base = id; mc.extras = mc.extras.filter(x => x !== id); renderMC(); }
-function setForm(f){
+// Delivery só sai na garrafa: se a pessoa tentar escolher copo em delivery, o site volta para garrafa e avisa
+const modoDelivery = () => ($("#tgMode [aria-pressed=true]") || {dataset:{}}).dataset.v !== "Retirada";
+const AVISO_COPO = "Você está em delivery: este copo vai como garrafa de 1L, pelo mesmo preço.";
+let avisoT;
+function avisoCopo(onde){
+  clearTimeout(avisoT);
+  ["#mcHint", "#heroAviso"].forEach(s => { const el = $(s); if (!el) return; el.hidden = s !== onde; if (s === onde) el.textContent = AVISO_COPO; });
+  if (onde) avisoT = setTimeout(() => avisoCopo(null), 6000);
+}
+function setForm(f, origem){
+  if (f === "cup" && modoDelivery()){
+    f = "bottle";
+    if (origem === "montador") avisoCopo("#mcHint");
+    else if (origem === "topo") avisoCopo("#heroAviso");
+  } else if (origem) avisoCopo(null);
   mc.form = f;
   renderMC();
 }
-$("#mcForm").addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) setForm(b.dataset.v); });
+$("#mcForm").addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) setForm(b.dataset.v, "montador"); });
 $("#mcMinus").onclick = () => { mc.qty = Math.max(1, mc.qty - 1); renderMC(); };
 $("#mcPlus").onclick = () => { mc.qty = Math.min(30, mc.qty + 1); renderMC(); };
 
@@ -220,16 +234,12 @@ function renderMC(){
   $("#mcXmsg").textContent = cheio ? `Saborizante escolhido: ${extraOf(mc.extras[0]).nome}. É possível escolher apenas um saborizante: para trocar, desmarque e escolha outro.`
     : "Escolha 1 saborizante (opcional).";
   $("#mcXmsg").classList.toggle("cheio", cheio);
-  // 2) delivery: copo vai como garrafa
-  const delivSel = ($("#tgMode [aria-pressed=true]") || {dataset:{}}).dataset.v !== "Retirada";
-  const copoNoDeliv = delivSel && mc.form === "cup";
-  $("#mcHint").textContent = copoNoDeliv ? "Você está em delivery: este copo vai como garrafa de 1L, pelo mesmo preço."
-    : "Delivery sai na garrafa. Na retirada você escolhe copo ou garrafa.";
-  $("#mcHint").classList.toggle("alerta", copoNoDeliv);
+  // em delivery o botão Copo fica esmaecido (ao tocar, volta para garrafa e mostra o aviso)
+  const emDelivery = modoDelivery();
+  $$('#mcForm [data-v="cup"], button[data-form="cup"]').forEach(x => { x.classList.toggle("bloq", emDelivery); x.title = emDelivery ? "No delivery o Hype vai na garrafa" : ""; });
   const name = compName(mc.base, mc.extras), isKit = mc.form === "kit", K = kitOf(mc.kit);
   $("#flavName").textContent = name;
   $("#mcKit").hidden = !isKit;
-  $("#mcHint").hidden = isKit;
   $$("#mcKits [data-k]").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === mc.kit));
   $("#mcPronto").checked = mc.pronto;
   const cur = {form:mc.form, base:mc.base, extras:mc.extras, kit:mc.kit, pronto:mc.pronto, qty:mc.qty};
@@ -243,7 +253,7 @@ function renderMC(){
 }
 
 $$("button[data-form]").forEach(b => b.addEventListener("click", () => {
-  setForm(b.dataset.form);
+  setForm(b.dataset.form, "topo");
   hero.svg.setAttribute("aria-label", b.dataset.form === "cup" ? "Copo de Hype Drink de 1 litro" : "Garrafa de Hype Drink de 1 litro");
 }));
 
@@ -537,10 +547,16 @@ function onMode(v){
   $("#modeNote").textContent = v === "Delivery" ? "No delivery tudo vai na garrafa de 1L: copos da sacola viram garrafa, pelo mesmo preço."
     : "Na retirada você leva no copo ou na garrafa, como montou.";
   $("#taxaNote").hidden = $("#totEntrega").hidden = v !== "Delivery";
+  $("#recvTxt").textContent = v === "Delivery" ? "Delivery" : "Retirada no local";
+  $("#recvTroca").textContent = v === "Delivery" ? "Trocar para Retirar" : "Trocar para Delivery";
+  if (v === "Delivery" && mc.form === "cup") mc.form = "bottle"; // delivery só na garrafa
+  if (v !== "Delivery") avisoCopo(null);
   if (v === "Delivery" && tgVal("tgPay") === "Dinheiro"){ pressTg("tgPay", "Pix"); onPay("Pix"); }
   renderBag(); renderMC();
 }
 toggleGroup("tgMode", onMode);
+// no formulário do pedido: atalho para trocar a forma de receber (o seletor fica no Monte seu copo)
+$("#recvTroca").addEventListener("click", () => $(`#tgMode button[data-v="${modoDelivery() ? "Retirada" : "Delivery"}"]`).click());
 const PAY_NOTES = PAGAMENTO_ONLINE
   ? {Pix:"Pague agora com Pix no checkout seguro da InfinitePay.", "Cartão":"Pague agora com cartão de crédito no checkout seguro da InfinitePay.", Dinheiro:"Dinheiro só na retirada: você paga quando buscar o pedido."}
   : {Pix:"Pix na entrega ou na retirada.", "Cartão":"Cartão na entrega ou na retirada.", Dinheiro:"Dinheiro na retirada."};
