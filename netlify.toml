@@ -1,8 +1,3 @@
-# O site saiu do Netlify e agora fica no Cloudflare Pages (https://hypefitdrink.pages.dev).
-# Se o Netlify voltar a publicar, o endereço antigo passa a levar para o novo (links antigos e Google).
-[build]
-  publish = "public"
-
 [[redirects]]
   from = "/*"
   to = "https://hypefitdrink.pages.dev/:splat"
