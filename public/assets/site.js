@@ -642,7 +642,7 @@ $("#orderForm").addEventListener("submit", e => {
   if (isOnlinePay(pay)) return payOnline(L, delivery, v("#oname"));
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(L.join("\n"))}`, "_blank");
 });
-// Pagamento online: o servidor (Netlify Function) calcula o valor e cria o link da InfinitePay
+// Pagamento online: o servidor (Cloudflare Pages Function, pasta functions/api) calcula o valor e cria o link da InfinitePay
 let paying = false;
 // Ao voltar do checkout pelo botão "voltar", o navegador restaura a página congelada: destrava o botão
 addEventListener("pageshow", () => {
